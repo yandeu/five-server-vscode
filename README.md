@@ -12,21 +12,30 @@ Development Server with **Live Reload** Capability.
 ## Top Features
 
 - 🚀 **Remote Logs**  
-   Displays the logs of your browser in your terminal!  
-   _Useful when debugging on your smartphone for example._
+  Displays the logs of your browser in your terminal!  
+  _Useful when debugging on your smartphone for example._  
   _Disabled by default._
 
 - 🚀 **Instant Updates**  
-  Updates your html page while typing!
+  Updates your html page while typing!  
+  _Disabled by default._
 
 - 🚀 **Highlights**  
-  Highlights the code you are working on in your browser!
+  Highlights the code you are working on in your browser!  
+  _Will be improved in the next weeks._  
+  _Disabled by default._
 
 - 🚀 **Auto Navigation**  
-  Navigates your browser automatically to the current editing .html file!
+  Navigates your browser automatically to the current editing .html file!  
+  _Enabled by default._
+
+- 🚀 **PHP Server**  
+  Serves not only your `.html` files but also `.php`.  
+  _Available soon._
 
 - 🚀 **Server Side Rendered App**  
-  Works with any Server Side Rendered content like **PHP** or **Express.js**!
+  Works with any Server Side Rendered content like **PHP** or **Express.js**!  
+  _See docs below._
 
 ## Preview
 
@@ -51,8 +60,8 @@ All remote logs will be visible in a new Terminal called "Five Server".
 ```js
 // fiveserver.config.js
 module.exports = {
-  highlight: false, // disable highlight feature
-  injectBody: false, // disable instant update
+  highlight: true, // enable highlight feature
+  injectBody: true, // enable instant update
   navigate: false, // disable auto-navigation
   remoteLogs: true | "yellow", // enable remoteLogs or choose a different color
 };

@@ -23,19 +23,19 @@ const startCommand = "vscode-five-server.start";
 const closeCommand = "vscode-five-server.close";
 const statusBarItemCommand = "vscode-five-server.statusBar";
 
-const shouldHighlight = () => {
-  if (config && config.highlight === false) return false;
-  return true;
-};
-
 const shouldNavigate = () => {
   if (config && config.navigate === false) return false;
   return true;
 };
 
+const shouldHighlight = () => {
+  if (config && config.highlight === true) return true;
+  return false;
+};
+
 const shouldInjectBody = () => {
-  if (config && config.injectBody === false) return false;
-  return true;
+  if (config && config.injectBody === true) return true;
+  return false;
 };
 
 export function activate(context: vscode.ExtensionContext) {
