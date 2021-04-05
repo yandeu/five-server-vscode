@@ -13,16 +13,16 @@ async function main() {
     const extensionTestsPath = path.resolve(__dirname, "./suite/index");
 
     // Download VS Code, unzip it and run the integration test
-    // (version 1.42.1 / January 2020)
+    // (latest version)
     await runTests({
-      version: "1.42.1",
       extensionDevelopmentPath,
       extensionTestsPath,
     });
 
     // Download VS Code, unzip it and run the integration test
-    // (latest version)
+    // (version 1.42.1 / January 2020)
     await runTests({
+      version: "1.42.1",
       extensionDevelopmentPath,
       extensionTestsPath,
     });
