@@ -1,0 +1,119 @@
+{
+  "name": "five-server",
+  "displayName": "Five Server",
+  "description": "Dev Server with Live Reload. (Maintained Fork of Live Server)",
+  "version": "0.0.17",
+  "publisher": "yandeu",
+  "icon": "img/icon-king.png",
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "vscode": "^1.42.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "badges": [
+    {
+      "url": "https://img.shields.io/badge/Sponsor-%E2%9D%A4-lightgrey?style=social&logo=GitHub",
+      "href": "https://github.com/sponsors/yandeu",
+      "description": "GitHub Sponsors"
+    }
+  ],
+  "keywords": [
+    "remote",
+    "browser",
+    "development",
+    "tool",
+    "http",
+    "live",
+    "instant",
+    "server",
+    "cli",
+    "preview",
+    "reload",
+    "refresh",
+    "update",
+    "highlight",
+    "live-server",
+    "live server"
+  ],
+  "galleryBanner": {
+    "color": "#41205f",
+    "theme": "dark"
+  },
+  "qna": false,
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-five-server.start",
+        "title": "Five-Server: Start"
+      },
+      {
+        "command": "vscode-five-server.close",
+        "title": "Five-Server: Close"
+      },
+      {
+        "command": "vscode-five-server.open",
+        "title": "Open with Five Server"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == html",
+          "command": "vscode-five-server.open",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == html",
+          "command": "vscode-five-server.open",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "make-package": "npm run clean && npm i && vsce package",
+    "clean": "rimraf out",
+    "prune": "rimraf dist out node_modules package-lock.json",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "format": "prettier --check src/** .vscode/**",
+    "format:write": "prettier --write src/** .vscode/**",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run test",
+    "test-compile": "tsc -p ./"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.0.4",
+    "@types/node": "^12.11.7",
+    "@types/vscode": "^1.42.1",
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.19.0",
+    "glob": "^7.1.6",
+    "mocha": "^8.2.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.1.3",
+    "vscode-test": "^1.5.0"
+  },
+  "dependencies": {
+    "bufferutil": "^4.0.1",
+    "five-server": "0.0.14",
+    "utf-8-validate": "^5.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yandeu/five-server-vscode.git"
+  },
+  "homepage": "https://github.com/yandeu/five-server-vscode#readme"
+}
