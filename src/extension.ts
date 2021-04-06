@@ -23,6 +23,11 @@ const startCommand = "vscode-five-server.start";
 const closeCommand = "vscode-five-server.close";
 const statusBarItemCommand = "vscode-five-server.statusBar";
 
+const isHtml = (file: string | undefined) => {
+  if (!file) return false;
+  return /\.html$/.test(file);
+};
+
 const shouldNavigate = () => {
   if (config && config.navigate === false) return false;
   return true;
@@ -45,12 +50,14 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.window.onDidChangeActiveTextEditor((e) => {
     if (!fiveServer?.isRunning) return;
+    if (!isHtml(e?.document.fileName)) return;
 
     navigate(e?.document.fileName);
   });
 
   vscode.window.onDidChangeTextEditorSelection((e) => {
     if (!fiveServer?.isRunning) return;
+    if (!isHtml(e.textEditor.document.fileName)) return;
 
     navigate(e.textEditor.document.fileName);
 
@@ -59,39 +66,34 @@ export function activate(context: vscode.ExtensionContext) {
       e.textEditor.document.getText()
     );
 
-    if (
-      shouldHighlight() &&
-      position &&
-      /\.html$/.test(e.textEditor.document.fileName)
-    ) {
+    if (shouldHighlight() && position)
       fiveServer.highlight(e.textEditor.document.fileName, position);
-    }
   });
 
   vscode.workspace.onDidSaveTextDocument((e) => {
     if (!fiveServer?.isRunning) return;
+    if (!isHtml(e.fileName)) return;
 
-    if (/\.html$/.test(e.fileName)) {
-      fiveServer.reloadBrowserWindow();
+    fiveServer.reloadBrowserWindow();
 
-      // TODO: Maybe this needs improvement?
-      const sendPosition = () => {
-        const position = getPosition(
-          vscode.window.activeTextEditor?.selection.active,
-          e.getText()
-        );
-        if (shouldHighlight() && position)
-          fiveServer?.highlight(e.fileName, position);
-      };
+    // TODO: Maybe this needs improvement?
+    const sendPosition = () => {
+      const position = getPosition(
+        vscode.window.activeTextEditor?.selection.active,
+        e.getText()
+      );
+      if (shouldHighlight() && position)
+        fiveServer?.highlight(e.fileName, position);
+    };
 
-      setTimeout(sendPosition, 250);
-      setTimeout(sendPosition, 500);
-      setTimeout(sendPosition, 1000);
-    }
+    setTimeout(sendPosition, 250);
+    setTimeout(sendPosition, 500);
+    setTimeout(sendPosition, 1000);
   });
 
   vscode.workspace.onDidChangeTextDocument((e) => {
     if (!fiveServer?.isRunning) return;
+    if (!isHtml(e.document.fileName)) return;
 
     if (!shouldInjectBody()) return;
 
@@ -138,6 +140,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const navigate = (fileName: string | undefined) => {
     if (!fiveServer?.isRunning) return;
+    if (!isHtml(fileName)) return;
 
     if (
       typeof fileName === "undefined" ||
@@ -149,7 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
     if (activeFileName === fileName) return;
     activeFileName = fileName;
 
-    if (fileName && /\.html$/.test(fileName) && workspace) {
+    if (fileName && workspace) {
       fileName = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
       fiveServer.navigate(`/${fileName}`);
     }
