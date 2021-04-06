@@ -193,8 +193,10 @@ export function activate(context: vscode.ExtensionContext) {
     // Get configFile for "root, injectBody and highlight"
     config = await getConfigFile(true, workspace);
     if (config && config.root) root = config.root;
+
     // @ts-ignore
     if (config && config.debugVSCode === true) debug = true;
+    else debug = false;
 
     rootAbsolute = join(workspace, root);
 
