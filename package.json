@@ -2,7 +2,7 @@
   "name": "five-server",
   "displayName": "Five Server",
   "description": "Dev Server with Live Reload. (Maintained Fork of Live Server)",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "publisher": "yandeu",
   "icon": "img/icon-king.png",
   "license": "SEE LICENSE IN LICENSE",

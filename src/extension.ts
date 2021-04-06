@@ -16,6 +16,7 @@ let rootAbsolute: string;
 let config: LiveServerParams = {};
 let fiveServer: FiveServer | undefined;
 let myStatusBarItem: vscode.StatusBarItem;
+let debug = false;
 
 const state = "vscode-five-server.state";
 const openCommand = "vscode-five-server.open";
@@ -192,8 +193,21 @@ export function activate(context: vscode.ExtensionContext) {
     // Get configFile for "root, injectBody and highlight"
     config = await getConfigFile(true, workspace);
     if (config && config.root) root = config.root;
+    // @ts-ignore
+    if (config && config.debugVSCode === true) debug = true;
 
     rootAbsolute = join(workspace, root);
+
+    if (debug) {
+      pty.write(
+        "DEBUG:",
+        '"workspace", "root" and "open" will be passed to fiveServer.start()'
+      );
+      pty.write("Workspace:", workspace);
+      pty.write("Root:", root);
+      pty.write("Absolute (workspace + root):", rootAbsolute);
+      pty.write("File:", uri?.fsPath);
+    }
 
     if (workspace && typeof root !== "undefined" && uri?.fsPath) {
       const file = uri.fsPath
@@ -202,6 +216,8 @@ export function activate(context: vscode.ExtensionContext) {
 
       activeFileName = file;
 
+      if (debug) pty.write("Open:", file);
+
       await fiveServer.start({
         workspace,
         root,
@@ -209,6 +225,8 @@ export function activate(context: vscode.ExtensionContext) {
         injectBody: shouldInjectBody(),
       });
     } else {
+      if (debug) pty.write("Open:", "");
+
       await fiveServer.start({
         workspace,
         root,

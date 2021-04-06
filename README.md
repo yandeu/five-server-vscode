@@ -77,6 +77,16 @@ module.exports = {
 
 ## Issues
 
+Need to debug something?  
+Set `debugVSCode` to true;
+
+```js
+// fiveserver.config.js
+module.exports = {
+  debugVSCode: true,
+};
+```
+
 Having issues? For now, you can't report issues since this extension is in development.  
 Please check back in a month or two to report issues or request new features.
 

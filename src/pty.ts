@@ -4,6 +4,10 @@ export class PTY {
   writeEmitter: vscode.EventEmitter<string>;
   terminal: vscode.Terminal;
 
+  public write(...message: string[]) {
+    this.terminal.sendText(message.join(" "), true);
+  }
+
   constructor() {
     this.writeEmitter = new vscode.EventEmitter<string>();
 
