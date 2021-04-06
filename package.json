@@ -19,7 +19,6 @@
       "description": "GitHub Sponsors"
     }
   ],
-  "qna": "https://github.com/yandeu/five-server/discussions",
   "keywords": [
     "remote",
     "browser",
@@ -44,7 +43,7 @@
     "color": "#41205f",
     "theme": "dark"
   },
-  "qna": false,
+  "qna": "https://github.com/yandeu/five-server/discussions",
   "activationEvents": [
     "*"
   ],
