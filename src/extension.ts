@@ -222,12 +222,17 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   const closeServer = () => {
-    context.workspaceState.update(state, "off");
+    context.workspaceState.update(state, "loading");
     updateStatusBarItem(context);
+
     if (fiveServer) {
-      fiveServer.shutdown();
-      // @ts-ignore
-      fiveServer = null;
+      fiveServer.shutdown().then(() => {
+        // @ts-ignore
+        fiveServer = null;
+
+        context.workspaceState.update(state, "off");
+        updateStatusBarItem(context);
+      });
     }
     if (pty) {
       pty.dispose();
