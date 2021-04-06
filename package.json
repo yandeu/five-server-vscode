@@ -113,6 +113,9 @@
     "five-server": "0.0.14",
     "utf-8-validate": "^5.0.2"
   },
+  "bugs": {
+    "url": "https://github.com/yandeu/five-server/discussions"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/yandeu/five-server-vscode.git"
