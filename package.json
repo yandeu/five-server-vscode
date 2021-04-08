@@ -17,6 +17,11 @@
       "url": "https://img.shields.io/badge/Sponsor-%E2%9D%A4-lightgrey?style=social&logo=GitHub",
       "href": "https://github.com/sponsors/yandeu",
       "description": "GitHub Sponsors"
+    },
+    {
+      "url": "https://img.shields.io/badge/One--Time%20Donation-$1-lightgrey?style=social&logo=GitHub",
+      "href": "https://github.com/sponsors/yandeu?frequency=one-time&sponsor=yandeu#sponsors:~:text=%241%20one%20time",
+      "description": "One-Time Donation"
     }
   ],
   "keywords": [
