@@ -29,13 +29,31 @@ const isHtml = (file: string | undefined) => {
   return /\.html$/.test(file);
 };
 
-const shouldNavigate = () => {
+const isPhp = (file: string | undefined) => {
+  if (!file) return false;
+  return /\.php$/.test(file);
+};
+
+// check for </head> </body> or </html>tag
+const containsTags = (text: string) => {
+  return /<\/head>|<\/body>|<\/html>/gm.test(text);
+};
+
+// navigate to .html and .php files
+const shouldNavigate = (file: string | undefined, text: string | undefined) => {
+  if (!file) return;
+  if (!text) return;
   if (config && config.navigate === false) return false;
+  if (!isPhp(file) && !isHtml(file)) return false;
+  if (!containsTags(text)) return;
+
   return true;
 };
 
-const shouldHighlight = () => {
+// highlight only .html files
+const shouldHighlight = (file: string | undefined) => {
   if (config && config.highlight === true) return true;
+  if (!isHtml(file)) return false;
   return false;
 };
 
@@ -49,31 +67,37 @@ export function activate(context: vscode.ExtensionContext) {
 
   // vscode.window.showInformationMessage("Plugin Activated");
 
+  // navigate to new file
   vscode.window.onDidChangeActiveTextEditor((e) => {
     if (!fiveServer?.isRunning) return;
-    if (!isHtml(e?.document.fileName)) return;
 
-    navigate(e?.document.fileName);
+    navigate(e?.document.fileName, e?.document.getText());
   });
 
+  // change highlight
   vscode.window.onDidChangeTextEditorSelection((e) => {
     if (!fiveServer?.isRunning) return;
-    if (!isHtml(e.textEditor.document.fileName)) return;
 
-    navigate(e.textEditor.document.fileName);
+    const fileName = e.textEditor.document.fileName;
+    const text = e.textEditor.document.getText();
+    navigate(fileName, text);
+
+    if (!isHtml(fileName)) return;
 
     const position = getPosition(
       e.textEditor.selection.active,
       e.textEditor.document.getText()
     );
 
-    if (shouldHighlight() && position)
+    if (shouldHighlight(fileName) && position)
       fiveServer.highlight(e.textEditor.document.fileName, position);
   });
 
+  // reload browser
   vscode.workspace.onDidSaveTextDocument((e) => {
     if (!fiveServer?.isRunning) return;
-    if (!isHtml(e.fileName)) return;
+
+    if (!isHtml(e.fileName) || !isPhp(e.fileName)) return;
 
     fiveServer.reloadBrowserWindow();
 
@@ -83,7 +107,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.activeTextEditor?.selection.active,
         e.getText()
       );
-      if (shouldHighlight() && position)
+      if (shouldHighlight(e.fileName) && position)
         fiveServer?.highlight(e.fileName, position);
     };
 
@@ -92,8 +116,10 @@ export function activate(context: vscode.ExtensionContext) {
     setTimeout(sendPosition, 1000);
   });
 
+  // inject body into .html file
   vscode.workspace.onDidChangeTextDocument((e) => {
     if (!fiveServer?.isRunning) return;
+
     if (!isHtml(e.document.fileName)) return;
 
     if (!shouldInjectBody()) return;
@@ -112,7 +138,7 @@ export function activate(context: vscode.ExtensionContext) {
       fiveServer.updateBody(
         e.document.fileName,
         body,
-        shouldHighlight() ? position : undefined
+        shouldHighlight(e.document.fileName) ? position : undefined
       );
     }
   });
@@ -139,22 +165,19 @@ export function activate(context: vscode.ExtensionContext) {
     } else return;
   };
 
-  const navigate = (fileName: string | undefined) => {
+  const navigate = (fileName: string | undefined, text: string | undefined) => {
     if (!fiveServer?.isRunning) return;
-    if (!isHtml(fileName)) return;
+    if (!fileName) return;
+    if (!text) return;
 
-    if (
-      typeof fileName === "undefined" ||
-      !fiveServer.isRunning ||
-      !shouldNavigate()
-    )
-      return;
+    if (!shouldNavigate(fileName, text)) return;
 
     if (activeFileName === fileName) return;
     activeFileName = fileName;
 
     if (fileName && workspace) {
       fileName = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+      console.log("AVEIGATE:", fileName);
       fiveServer.navigate(`/${fileName}`);
     }
   };
