@@ -1,6 +1,6 @@
 {
   "name": "five-server",
-  "displayName": "Five Server",
+  "displayName": "Five Server (Live Server)",
   "description": "Dev Server with Live Reload. (Maintained Fork of Live Server)",
   "version": "0.0.20",
   "publisher": "yandeu",
