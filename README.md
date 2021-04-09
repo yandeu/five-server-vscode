@@ -31,10 +31,10 @@ Development Server with **Live Reload** Capability.
 
 - 🚀 **PHP Server**  
   Serves not only your `.html` files but also `.php`.  
-  _Available soon._
+  _See docs below._
 
 - 🚀 **Server Side Rendered App**  
-  Works with any Server Side Rendered content like **PHP** or **Express.js**!  
+  Works with any Server Side Rendered content like **Express.js**!  
   _See docs below._
 
 ## Preview
