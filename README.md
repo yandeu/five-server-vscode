@@ -84,7 +84,8 @@ Five Server is still in development. Issues you have now, will probably be resol
 Something is not working?  
 Try the simple setup below:
 
-- make sure you have uninstalled the old Live Server
+- make sure you have uninstalled the old **Live Server**
+- check if you have the latest version ![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server?label=VSCode&style=flat-square)
 - make a new folder `www` on the desktop
 - add the `index.html` (see below)
 - open the folder `www` with VSCode
