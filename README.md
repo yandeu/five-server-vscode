@@ -77,7 +77,33 @@ module.exports = {
 
 ## Issues
 
-Need to debug something?  
+Five Server is still in development. Issues you have now, will probably be resolved soon.
+
+### Quick Test
+
+Something is not working?  
+Try the simple setup below:
+
+- make sure you have uninstalled the old Live Server
+- make a new folder `www` on the desktop
+- add the `index.html` (see below)
+- open the folder `www` with VSCode
+- click on **Go Live**
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML Test File</title>
+  </head>
+  <body>
+    <h1>It works!</h1>
+  </body>
+</html>
+```
+
+### Debug Mode
+
 Set `debugVSCode` to true;
 
 ```js
@@ -86,9 +112,6 @@ module.exports = {
   debugVSCode: true,
 };
 ```
-
-Having issues? For now, you can't report issues since this extension is in development.  
-Please check back in a month or two to report issues or request new features.
 
 ## Release Notes
 
