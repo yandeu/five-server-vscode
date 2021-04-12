@@ -1,45 +1,41 @@
-# Five Server
+<p align="center">
+  <img
+    src="https://raw.githubusercontent.com/yandeu/five-server-vscode/main/img/icon.png"
+    height="100"
+    width="134"
+  />
+</p>
 
-VSCode Extension for [Five Server](https://github.com/yandeu/five-server#readme).
+<h1 align="center">Five Server</h1>
 
-Development Server with **Live Reload** Capability.  
-(Maintained **F**ork of **Live Server**)
+<p align="center">
+  Maintained fork of <em><b>live server</b></em>
+</p>
 
-- Rewritten in TypeScript
-- Up-to-date dependencies
-- Better than ever!
+<p align="center">
+  <a
+    href="https://marketplace.visualstudio.com/items?itemName=yandeu.five-server"
+    target="__blank"
+  >
+    <img
+      src="https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server.svg?color=228cb3&amp;label="
+      alt="| VERSION"
+    />
+  </a>
+</p>
 
-## Top Features
+- ⚡️ **Updates your .html instantly** while typing on your keyboard
+- ⬢ Remote displays the logs of your browser/phone in your terminal
+- 💡 Highlights the code you are working on in your browser
+- 🚀 Navigates your browser automatically to the current editing file
+- 🐘 Includes **PHP Support** for serving and live reload all your `.php` files
+- 🗄️ Supports all **Server Side Rendered Apps** like express.js
 
-- 🚀 **Remote Logs**  
-  Displays the logs of your browser in your terminal!  
-  _Useful when debugging on your smartphone for example._  
-  _Disabled by default._
-
-- 🚀 **Instant Updates**  
-  Updates your html page while typing!  
-  _Disabled by default._
-
-- 🚀 **Highlights**  
-  Highlights the code you are working on in your browser!  
-  _Will be improved in the next weeks._  
-  _Disabled by default._
-
-- 🚀 **Auto Navigation**  
-  Navigates your browser automatically to the current editing .html file!  
-  _Enabled by default._
-
-- 🚀 **PHP Server**  
-  Serves not only your `.html` files but also `.php`.  
-  _See docs below._
-
-- 🚀 **Server Side Rendered App**  
-  Works with any Server Side Rendered content like **Express.js**!  
-  _See docs below._
-
-## Preview
-
-[![preview](https://raw.githubusercontent.com/yandeu/five-server/main/img/vscode-preview.gif)](https://youtu.be/aETkOu8J-bo)
+<p>
+  <a href="https://youtu.be/aETkOu8J-bo">
+    <img src="https://raw.githubusercontent.com/yandeu/five-server/main/img/vscode-preview.gif" alt="demo">
+  </a>
+</p>
 
 ## Get Started
 
@@ -49,9 +45,45 @@ Development Server with **Live Reload** Capability.
 2. Right-Click on an open `.html` file > **Open with Five Server**
 3. Right-Click an `.html` file in the Sidebar > **Open with Five Server**
 
-## Documentation
+_Make sure you open a folder in VSCode and NOT just a single file._
 
-### Remote Logs
+## Quick Test
+
+Something is not working? Try the simple setup below:
+
+- make sure you have uninstalled the old **Live Server**
+- check if you have the latest version  
+  ![| VERSION](https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server.svg?color=228cb3&label=)
+- make a new folder `www` on the desktop
+- add the `index.html` (see below)
+- open the folder `www` with VSCode
+- click on **Go Live**
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML Test File</title>
+  </head>
+  <body>
+    <h1>It works!</h1>
+  </body>
+</html>
+```
+
+The setup above works but your project not?
+
+- Maybe because your project is on another drive?
+- Or maybe on a USB Stick or remote folder like `OneDrive` or `DropBox`?
+- Make sure you open a folder in VSCode and NOT just a single file.
+- All these things can sometimes cause issues.
+
+## Features
+
+💡 Most **new features** are disabled by default.  
+Turn them on by configuring a `fiveserver.config.js` file in the root of your workspace.
+
+Instant Updates & Highlight works only with `.html` files.
 
 All remote logs will be visible in a new Terminal called "Five Server".
 
@@ -75,37 +107,21 @@ module.exports = {
 - Read [Five Server - Documentation](https://github.com/yandeu/five-server#documentation).
 - Read [Five Server - Config File](https://github.com/yandeu/five-server#config-file).
 
+## Quick Q&A
+
+- Why can't I set the configuration inside VSCode?  
+  _Simply because I haven't added it yet._
+
+- Why can't I use keyboard shortcuts?  
+  _Simply because I haven't added it yet._
+
 ## Issues
 
 Five Server is still in development. Issues you have now, will probably be resolved soon.
 
-### Quick Test
-
-Something is not working?  
-Try the simple setup below:
-
-- make sure you have uninstalled the old **Live Server**
-- check if you have the latest version ![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server?label=VSCode&style=flat-square)
-- make a new folder `www` on the desktop
-- add the `index.html` (see below)
-- open the folder `www` with VSCode
-- click on **Go Live**
-
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>HTML Test File</title>
-  </head>
-  <body>
-    <h1>It works!</h1>
-  </body>
-</html>
-```
-
 ### Debug Mode
 
-Set `debugVSCode` to true;
+Need to debug something? Set `debugVSCode` to true.
 
 ```js
 // fiveserver.config.js
