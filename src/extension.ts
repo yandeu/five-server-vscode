@@ -177,7 +177,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     if (fileName && workspace) {
       fileName = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
-      console.log("AVEIGATE:", fileName);
       fiveServer.navigate(`/${fileName}`);
     }
   };
