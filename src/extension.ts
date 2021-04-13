@@ -56,7 +56,15 @@ const shouldNavigate = (file: string | undefined, text: string | undefined) => {
   if (!text) return;
   if (config && config.navigate === false) return false;
   if (!isPhp(file) && !isHtml(file)) return false;
-  if (!containsTags(text)) return;
+
+  // TODO(yandeu): fix this block
+  // do not navigate to a .html file that does not contain the required tags.
+  if (isHtml(file) && !containsTags(text)) {
+    message.pretty(`File: ${file} does not contain required HTML tags.`, {
+      id: "vscode",
+    });
+    return false;
+  }
 
   return true;
 };
@@ -97,8 +105,6 @@ export function activate(context: vscode.ExtensionContext) {
     if (!fiveServer?.isRunning) return;
 
     const fileName = e.textEditor.document.fileName;
-    const text = e.textEditor.document.getText();
-    navigate(fileName, text);
 
     if (!isHtml(fileName)) return;
 
