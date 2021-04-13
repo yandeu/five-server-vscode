@@ -35,6 +35,16 @@ const isPhp = (file: string | undefined) => {
   return /\.php$/.test(file);
 };
 
+const isCss = (file: string | undefined) => {
+  if (!file) return false;
+  return /\.css$/.test(file);
+};
+
+const isJs = (file: string | undefined) => {
+  if (!file) return false;
+  return /\.js$/.test(file);
+};
+
 // check for </head> </body> or </html>tag
 const containsTags = (text: string) => {
   return /<\/head>|<\/body>|<\/html>/gm.test(text);
@@ -58,6 +68,13 @@ const shouldHighlight = (file: string | undefined) => {
   return false;
 };
 
+// default: true
+const shouldInjectCss = () => {
+  if (config && config.injectCss === false) return false;
+  return true;
+};
+
+// default: false
 const shouldInjectBody = () => {
   if (config && config.injectBody === true) return true;
   return false;
@@ -98,9 +115,13 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.workspace.onDidSaveTextDocument((e) => {
     if (!fiveServer?.isRunning) return;
 
-    if (!isHtml(e.fileName) || !isPhp(e.fileName)) return;
+    // don't reload browser if we modify css and inject css
+    if (shouldInjectCss() && isCss(e.fileName)) return;
 
     fiveServer.reloadBrowserWindow();
+
+    // we do not highlight other file than .html
+    if (!isHtml(e.fileName)) return;
 
     // TODO: Maybe this needs improvement?
     const sendPosition = () => {
