@@ -71,14 +71,12 @@
     "menus": {
       "explorer/context": [
         {
-          "when": "resourceLangId == html",
           "command": "vscode-five-server.open",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "when": "resourceLangId == html",
           "command": "vscode-five-server.open",
           "group": "navigation"
         }

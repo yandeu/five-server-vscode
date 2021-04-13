@@ -6,7 +6,7 @@ import FiveServer, { LiveServerParams } from "five-server";
 import { getConfigFile } from "five-server/lib/misc";
 import { message } from "five-server/lib/msg";
 import { PTY } from "./pty";
-import { join } from "path";
+import { join, extname } from "path";
 
 let openURL = "";
 let pty: PTY;
@@ -272,9 +272,12 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     if (workspace && typeof root !== "undefined" && uri?.fsPath) {
-      const file = uri.fsPath
-        .replace(rootAbsolute, "")
-        .replace(/^\\|^\//gm, "");
+      let file = uri.fsPath.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+
+      const isFile = extname(file) !== "";
+
+      // serve .preview for all "files" other than .html and .php
+      if (isFile && !isHtml(file) && !isPhp(file)) file += ".preview";
 
       activeFileName = file;
 
