@@ -4,8 +4,16 @@ export class PTY {
   writeEmitter: vscode.EventEmitter<string>;
   terminal: vscode.Terminal;
 
+  lastWrite = "";
+
   public write(...message: string[]) {
-    this.terminal.sendText(message.join(" "), true);
+    const write = message.join(" ");
+
+    // somewhere is a bug that send every message twice :/
+    if (this.lastWrite === write) return;
+
+    this.terminal.sendText(write, true);
+    this.lastWrite = write;
   }
 
   constructor() {
@@ -20,30 +28,10 @@ export class PTY {
     };
 
     this.terminal = vscode.window.createTerminal({ name: "Five Server", pty });
+    this.terminal.show();
 
     // hide cursor
     this.terminal.sendText("\u001B[?25l");
-
-    const write = (type: any, message: any) => {
-      const msg = message.join(" ");
-      if (/\[\S+\]/gm.test(msg)) this.terminal.sendText(msg, true);
-      type.apply(console, message);
-    };
-
-    const oldLog = console.log;
-    console.log = function (...message: string[]) {
-      write(oldLog, message);
-    };
-
-    const oldWarn = console.warn;
-    console.warn = function (...message: string[]) {
-      write(oldWarn, message);
-    };
-
-    const oldError = console.error;
-    console.error = function (...message: string[]) {
-      write(oldError, message);
-    };
   }
 
   dispose() {

@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 
 import FiveServer, { LiveServerParams } from "five-server";
 import { getConfigFile } from "five-server/lib/misc";
+import { message } from "five-server/lib/msg";
 import { PTY } from "./pty";
 import { join } from "path";
 
@@ -198,9 +199,24 @@ export function activate(context: vscode.ExtensionContext) {
     }
   };
 
+  let lastMessage = "";
+  const messageHandler = (message: any) => {
+    if (lastMessage !== message && pty && message && message.msg) {
+      pty.write(message.msg);
+    }
+
+    lastMessage = message;
+  };
+
   const startServer = async (uri: vscode.Uri) => {
     if (!pty) pty = new PTY();
     if (!fiveServer) fiveServer = new FiveServer();
+
+    // @ts-ignore
+    message.removeListener("message", messageHandler);
+
+    // @ts-ignore
+    message.addListener("message", messageHandler);
 
     context.workspaceState.update(state, "loading");
     updateStatusBarItem(context);
@@ -267,6 +283,9 @@ export function activate(context: vscode.ExtensionContext) {
   const closeServer = () => {
     context.workspaceState.update(state, "loading");
     updateStatusBarItem(context);
+
+    // @ts-ignore
+    message.removeListener("message", messageHandler);
 
     if (fiveServer) {
       fiveServer.shutdown().then(() => {
