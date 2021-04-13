@@ -6,7 +6,7 @@ import FiveServer, { LiveServerParams } from "five-server";
 import { getConfigFile } from "five-server/lib/misc";
 import { message } from "five-server/lib/msg";
 import { PTY } from "./pty";
-import { join, extname } from "path";
+import { join, extname, basename } from "path";
 
 let openURL = "";
 let pty: PTY;
@@ -248,60 +248,86 @@ export function activate(context: vscode.ExtensionContext) {
     context.workspaceState.update(state, "loading");
     updateStatusBarItem(context);
 
+    config = {};
+
     workspace = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
 
-    if (!workspace) {
-      console.error("workspace 0 not found!");
-      return;
-    }
+    if (workspace) {
+      // Get configFile for "root, injectBody and highlight"
+      config = await getConfigFile(true, workspace);
+      if (config && config.root) root = config.root;
 
-    // Get configFile for "root, injectBody and highlight"
-    config = {};
-    config = await getConfigFile(true, workspace);
-    if (config && config.root) root = config.root;
+      // @ts-ignore
+      if (config && config.debugVSCode === true) debug = true;
+      else debug = false;
 
-    // @ts-ignore
-    if (config && config.debugVSCode === true) debug = true;
-    else debug = false;
+      rootAbsolute = join(workspace, root);
 
-    rootAbsolute = join(workspace, root);
+      if (debug) {
+        pty.write(
+          "DEBUG:",
+          '"workspace", "root" and "open" will be passed to fiveServer.start()'
+        );
+        pty.write("Workspace:", workspace);
+        pty.write("Root:", root);
+        pty.write("Absolute (workspace + root):", rootAbsolute);
+        pty.write("File:", uri?.fsPath);
+      }
 
-    if (debug) {
-      pty.write(
-        "DEBUG:",
-        '"workspace", "root" and "open" will be passed to fiveServer.start()'
+      if (workspace && typeof root !== "undefined" && uri?.fsPath) {
+        let file = uri.fsPath
+          .replace(rootAbsolute, "")
+          .replace(/^\\|^\//gm, "");
+
+        const isFile = extname(file) !== "";
+
+        // serve .preview for all "files" other than .html and .php
+        if (isFile && !isHtml(file) && !isPhp(file)) file += ".preview";
+
+        activeFileName = file;
+
+        if (debug) pty.write("Open:", file);
+
+        await fiveServer.start({
+          workspace,
+          root,
+          open: file,
+          injectBody: shouldInjectBody(),
+        });
+      } else {
+        if (debug) pty.write("Open:", "");
+
+        await fiveServer.start({
+          workspace,
+          root,
+          injectBody: shouldInjectBody(),
+        });
+      }
+    } else if (!workspace) {
+      // no workspace?
+      // the user opened probably only a single file instead of a folder
+      message.pretty(
+        'No Workspace found! You probably opened a "single file" instead of a "folder".',
+        { id: "vscode" }
       );
-      pty.write("Workspace:", workspace);
-      pty.write("Root:", root);
-      pty.write("Absolute (workspace + root):", rootAbsolute);
-      pty.write("File:", uri?.fsPath);
-    }
 
-    if (workspace && typeof root !== "undefined" && uri?.fsPath) {
-      let file = uri.fsPath.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+      // we get the path and filename from the window
+      const fileName = vscode.window.activeTextEditor?.document.fileName;
+      if (!fileName) {
+        message.pretty("Could not detect a valid file.", { id: "vscode" });
 
-      const isFile = extname(file) !== "";
+        context.workspaceState.update(state, "off");
+        updateStatusBarItem(context);
+        return;
+      }
 
-      // serve .preview for all "files" other than .html and .php
-      if (isFile && !isHtml(file) && !isPhp(file)) file += ".preview";
+      const file = basename(fileName);
+      const root = fileName.replace(file, "");
 
-      activeFileName = file;
-
-      if (debug) pty.write("Open:", file);
-
+      // start a simple server
       await fiveServer.start({
-        workspace,
         root,
         open: file,
-        injectBody: shouldInjectBody(),
-      });
-    } else {
-      if (debug) pty.write("Open:", "");
-
-      await fiveServer.start({
-        workspace,
-        root,
-        injectBody: shouldInjectBody(),
       });
     }
 
