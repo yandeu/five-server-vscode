@@ -115,7 +115,7 @@
   },
   "dependencies": {
     "bufferutil": "^4.0.1",
-    "five-server": "0.0.16",
+    "five-server": "0.0.18",
     "utf-8-validate": "^5.0.2"
   },
   "bugs": {
