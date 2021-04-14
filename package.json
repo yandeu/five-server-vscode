@@ -4,7 +4,7 @@
   "description": "Dev Server with Live Reload. (Maintained Fork of Live Server)",
   "version": "0.0.24",
   "publisher": "yandeu",
-  "icon": "img/icon-king.png",
+  "icon": "img/icon-star.png",
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "vscode": "^1.42.1"
