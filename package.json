@@ -84,7 +84,7 @@
     }
   },
   "scripts": {
-    "make-package": "npm run clean && npm i && vsce package",
+    "make-package": "npm run prune && npm i && vsce package",
     "clean": "rimraf out",
     "prune": "rimraf dist out node_modules package-lock.json",
     "compile": "tsc -p ./",
