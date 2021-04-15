@@ -213,15 +213,18 @@ export function activate(context: vscode.ExtensionContext) {
     const _state = context.workspaceState.get(state);
 
     if (_state === "on") {
-      myStatusBarItem.text = `$(circle-slash) ${openURL}`;
+      myStatusBarItem.text = `$(zap) ${openURL}`;
       myStatusBarItem.tooltip = "Close Five Server";
+      myStatusBarItem.color = "#ebb549";
       myStatusBarItem.show();
     } else if (_state === "loading") {
       myStatusBarItem.text = `$(sync~spin) Going Live...`;
+      myStatusBarItem.color = undefined;
       myStatusBarItem.show();
     } else {
-      myStatusBarItem.text = `$(broadcast) Go Live`;
+      myStatusBarItem.text = `$(play-circle) Go Live`;
       myStatusBarItem.tooltip = "Open Five Server";
+      myStatusBarItem.color = undefined;
       myStatusBarItem.show();
     }
   };
@@ -386,7 +389,7 @@ export function activate(context: vscode.ExtensionContext) {
   // create a new status bar item that we can now manage
   myStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
-    100
+    0
   );
   myStatusBarItem.command = statusBarItemCommand;
   updateStatusBarItem(context);
