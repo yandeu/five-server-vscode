@@ -289,18 +289,22 @@ export function activate(context: vscode.ExtensionContext) {
         if (debug) pty.write("Open:", file);
 
         await fiveServer.start({
-          workspace,
-          root,
-          open: file,
+          ...config,
           injectBody: shouldInjectBody(),
+          open: file,
+          root,
+          workspace,
+          _cli: true,
         });
       } else {
         if (debug) pty.write("Open:", "");
 
         await fiveServer.start({
-          workspace,
-          root,
+          ...config,
           injectBody: shouldInjectBody(),
+          root,
+          workspace,
+          _cli: true,
         });
       }
     } else if (!workspace) {
