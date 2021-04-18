@@ -25,6 +25,20 @@ const startCommand = "vscode-five-server.start";
 const closeCommand = "vscode-five-server.close";
 const statusBarItemCommand = "vscode-five-server.statusBar";
 
+const page = {
+  current: { text: "", fileName: "" },
+  last: { text: "", fileName: "" },
+};
+
+const updatePage = (fileName: string | undefined, text: string | undefined) => {
+  if (!fileName) return;
+  if (!text) return;
+
+  const _current = { ...page.current };
+  page.current = { text, fileName };
+  page.last = _current;
+};
+
 const isHtml = (file: string | undefined) => {
   if (!file) return false;
   return /\.html$/.test(file);
@@ -105,16 +119,13 @@ export function activate(context: vscode.ExtensionContext) {
     if (!fiveServer?.isRunning) return;
 
     const fileName = e.textEditor.document.fileName;
+    const text = e.textEditor.document.getText();
 
     if (!isHtml(fileName)) return;
+    if (!shouldInjectBody()) return;
 
-    const position = getPosition(
-      e.textEditor.selection.active,
-      e.textEditor.document.getText()
-    );
-
-    if (shouldHighlight(fileName) && position)
-      fiveServer.highlight(e.textEditor.document.fileName, position);
+    updatePage(fileName, text);
+    updateBody(fileName);
   });
 
   // reload browser
@@ -126,22 +137,17 @@ export function activate(context: vscode.ExtensionContext) {
 
     fiveServer.reloadBrowserWindow();
 
-    // we do not highlight other file than .html
+    // // we do not highlight other file than .html
     if (!isHtml(e.fileName)) return;
+    if (!shouldInjectBody()) return;
 
-    // TODO: Maybe this needs improvement?
-    const sendPosition = () => {
-      const position = getPosition(
-        vscode.window.activeTextEditor?.selection.active,
-        e.getText()
-      );
-      if (shouldHighlight(e.fileName) && position)
-        fiveServer?.highlight(e.fileName, position);
-    };
+    // // TODO: Maybe this needs improvement?
 
-    setTimeout(sendPosition, 250);
-    setTimeout(sendPosition, 500);
-    setTimeout(sendPosition, 1000);
+    updateBody(e.fileName);
+
+    setTimeout(() => updateBody(e.fileName), 250);
+    setTimeout(() => updateBody(e.fileName), 500);
+    setTimeout(() => updateBody(e.fileName), 1000);
   });
 
   // inject body into .html file
@@ -149,48 +155,25 @@ export function activate(context: vscode.ExtensionContext) {
     if (!fiveServer?.isRunning) return;
 
     if (!isHtml(e.document.fileName)) return;
-
     if (!shouldInjectBody()) return;
 
-    const res = /<body[^>]*>((.|[\n\r])*)<\/body>/gim.exec(
-      e.document.getText()
-    );
-
-    const position = getPosition(
-      vscode.window.activeTextEditor?.selection.active,
-      e.document.getText()
-    );
-
-    if (res && res[1]) {
-      const body = res[1];
-      fiveServer.updateBody(
-        e.document.fileName,
-        body,
-        shouldHighlight(e.document.fileName) ? position : undefined
-      );
-    }
+    updatePage(e.document.fileName, e.document.getText());
+    updateBody(page.current.fileName);
   });
 
-  const getPosition = (
-    position: vscode.Position | undefined,
-    text: string | undefined
-  ) => {
-    if (!fiveServer?.isRunning) return;
-    if (!position || !text) return;
+  const updateBody = (fileName: string) => {
+    if (page.current.fileName !== page.last.fileName) return;
 
-    if (position) {
-      const lines = text.split("\n");
-      let lineShift = 0;
+    if (!isHtml(fileName)) return;
+    if (!shouldInjectBody()) return;
 
-      for (let i = 0; i < lines.length - 1; i++) {
-        if (/<body/gm.test(lines[i])) {
-          lineShift = i;
-          break;
-        }
-      }
-
-      return { line: position.line - lineShift, character: position.character };
-    } else return;
+    // @ts-ignore // will be available in five-server@0.0.21
+    fiveServer?.parseBody?.updateBody(
+      fileName,
+      page.current.text,
+      shouldHighlight(fileName),
+      vscode.window.activeTextEditor?.selection.active
+    );
   };
 
   const navigate = (fileName: string | undefined, text: string | undefined) => {
