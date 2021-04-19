@@ -88,6 +88,8 @@ Note:
 - The features `highlight`, `injectBody` and `remoteLogs` are disable by default.
 - To use the `highlight` feature, `injectBody` has to be activated.
 - `injectBody` performs some simple HTML Validation. When using `injectBody`, a message will be displayed if your HTML Page is invalid.
+- To temporarily disable `highlight` for a single HTML Tag, add a **H**.  
+  Example: `<div H>Don't highlight me</div>`
 
 Config File:
 
