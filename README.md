@@ -19,7 +19,7 @@
   >
     <img
       src="https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server.svg?color=228cb3&amp;label="
-      alt="| VERSION"
+      alt="VERSION"
     />
   </a>
 </p>
@@ -45,15 +45,13 @@
 2. Right-Click on an open `.html` file > **Open with Five Server**
 3. Right-Click an `.html` file in the Sidebar > **Open with Five Server**
 
-_Make sure you open a folder in VSCode and NOT just a single file._
-
 ## Quick Test
 
 Something is not working? Try the simple setup below:
 
 - make sure you have uninstalled the old **Live Server**
 - check if you have the latest version  
-  ![| VERSION](https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server.svg?color=228cb3&label=)
+  [![VERSION](https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server.svg?color=228cb3&label=)](https://marketplace.visualstudio.com/items?itemName=yandeu.five-server)
 - make a new folder `www` on the desktop
 - add the `index.html` (see below)
 - open the folder `www` with VSCode
@@ -83,29 +81,34 @@ The setup above works but your project not?
 💡 Most **new features** are disabled by default.  
 Turn them on by configuring a `fiveserver.config.js` file in the root of your workspace.
 
-Instant Updates & Highlight works only with `.html` files.
+Note:
 
-All remote logs will be visible in a new Terminal called "Five Server".
+- **Instant Updates** & **Highlight** work only with `.html` files.
+- All remote logs will be visible in a new Terminal called "Five Server".
+- The features `highlight`, `injectBody` and `remoteLogs` are disable by default.
+- To use the `highlight` feature, `injectBody` has to be activated.
+- `injectBody` performs some simple HTML Validation. When using `injectBody`, a message will be displayed if your HTML Page is invalid.
 
-### Config File
+Config File:
 
 ```js
 // fiveserver.config.js
 module.exports = {
   highlight: true, // enable highlight feature
   injectBody: true, // enable instant update
+  remoteLogs: true, // enable remoteLogs
+  remoteLogs: "yellow", // enable remoteLogs and use the color yellow
+  injectCss: false, // disable injecting css
   navigate: false, // disable auto-navigation
-  remoteLogs: true | "yellow", // enable remoteLogs or choose a different color
 };
 ```
-
-- Check all available options for the config file in [`/src/types.ts`](https://github.com/yandeu/five-server/blob/main/src/types.ts).
-- Check all available colors for the `remoteLogs` in [`/src/colors.ts`](https://github.com/yandeu/five-server/blob/main/src/colors.ts).
 
 ### More Docs
 
 - Read [Five Server - Documentation](https://github.com/yandeu/five-server#documentation).
 - Read [Five Server - Config File](https://github.com/yandeu/five-server#config-file).
+- Check all available options for the **Config File** in [`/src/types.ts`](https://github.com/yandeu/five-server/blob/main/src/types.ts).
+- Check all available colors for the **remoteLogs** in [`/src/colors.ts`](https://github.com/yandeu/five-server/blob/main/src/colors.ts).
 
 ## Quick Q&A
 
@@ -117,7 +120,7 @@ module.exports = {
 
 ## Issues
 
-Five Server is still in development. Issues you have now, will probably be resolved soon.
+Five Server is still in development. New versions are expected to be released weekly. Issues you have now, will probably be resolved soon.
 
 ### Debug Mode
 
