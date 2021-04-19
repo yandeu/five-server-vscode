@@ -5,10 +5,12 @@ on:
     paths:
       - "src/**"
       - ".github/**"
+      - "**.json"
   pull_request:
     paths:
       - "src/**"
       - ".github/**"
+      - "**.json"
 
 jobs:
   build:
