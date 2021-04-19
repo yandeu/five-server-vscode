@@ -124,6 +124,10 @@ module.exports = {
 
 Five Server is still in development. New versions are expected to be released weekly. Issues you have now, will probably be resolved soon.
 
+### Known Issues
+
+- `injectBody` does not work well when using inline JavaScript. (fixed soon)
+
 ### Debug Mode
 
 Need to debug something? Set `debugVSCode` to true.
