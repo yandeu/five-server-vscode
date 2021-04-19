@@ -126,7 +126,21 @@ Five Server is still in development. New versions are expected to be released we
 
 ### Known Issues
 
-- `injectBody` does not work well when using inline JavaScript. (fixed soon)
+- `injectBody` does not work well when using inline JavaScript inside `<body>`. (fixed soon)  
+  As a workaround, execute your inline scripts after Five Server is connected:
+
+```html
+<script>
+  const five = document.querySelector('[data-id="five-server"]');
+
+  const main = () => {
+    console.log("Some JavaScript Code...");
+  };
+
+  if (five) five.addEventListener("connected", main);
+  else window.addEventListener("load", main);
+</script>
+```
 
 ### Debug Mode
 

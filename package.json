@@ -2,7 +2,7 @@
   "name": "five-server",
   "displayName": "Five Server (Live Server)",
   "description": "Dev Server with Live Reload. (Maintained Fork of Live Server)",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "publisher": "yandeu",
   "icon": "img/icon-star.png",
   "license": "SEE LICENSE IN LICENSE",
@@ -113,7 +113,7 @@
   },
   "dependencies": {
     "bufferutil": "^4.0.1",
-    "five-server": "^0.0.21",
+    "five-server": "^0.0.22",
     "utf-8-validate": "^5.0.2"
   },
   "bugs": {
