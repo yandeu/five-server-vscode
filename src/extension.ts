@@ -8,6 +8,9 @@ import { message } from "five-server/lib/msg";
 import { PTY } from "./pty";
 import { join, extname, basename } from "path";
 
+import { decorate, refreshDecorations } from "./decorator";
+import { colors } from "./helpers";
+
 let openURL = "";
 let pty: PTY;
 let activeFileName = "";
@@ -111,6 +114,8 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.window.onDidChangeActiveTextEditor((e) => {
     if (!fiveServer?.isRunning) return;
 
+    refreshDecorations(e?.document.fileName, { force: true });
+
     navigate(e?.document.fileName, e?.document.getText());
   });
 
@@ -198,7 +203,7 @@ export function activate(context: vscode.ExtensionContext) {
     if (_state === "on") {
       myStatusBarItem.text = `$(zap) ${openURL}`;
       myStatusBarItem.tooltip = "Close Five Server";
-      myStatusBarItem.color = "#ebb549";
+      myStatusBarItem.color = colors.yellow;
       myStatusBarItem.show();
     } else if (_state === "loading") {
       myStatusBarItem.text = `$(sync~spin) Going Live...`;
@@ -223,7 +228,36 @@ export function activate(context: vscode.ExtensionContext) {
 
   const startServer = async (uri: vscode.Uri) => {
     if (!pty) pty = new PTY();
-    if (!fiveServer) fiveServer = new FiveServer();
+    if (!fiveServer) {
+      fiveServer = new FiveServer();
+
+      // @ts-ignore // available in five-server@0.0.21
+      fiveServer.parseBody?.workers.on("message", (msg: any) => {
+        const json = JSON.parse(msg);
+
+        if (json.report && json.report.results) {
+          const results = json.report.results;
+
+          if (results.length === 0) {
+            decorate(page.current.fileName, [], colors.yellow);
+            return;
+          }
+
+          const htmlErrors = results[0].messages.map((m: any) => {
+            const { message, ruleId, line } = m;
+            return { message, ruleId, line };
+          });
+
+          decorate(
+            page.current.fileName,
+            htmlErrors.map((e: any) => {
+              return { text: `// ${e.message}`, line: e.line };
+            }),
+            colors.yellow
+          );
+        }
+      });
+    }
 
     // @ts-ignore
     message.removeListener("message", messageHandler);
