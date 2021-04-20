@@ -68,6 +68,20 @@
         "title": "Open with Five Server"
       }
     ],
+    "keybindings": [
+      {
+        "command": "vscode-five-server.open",
+        "key": "alt+L alt+O",
+        "when": "editorTextFocus",
+        "mac": "cmd+L cmd+O"
+      },
+      {
+        "command": "vscode-five-server.close",
+        "key": "alt+L alt+C",
+        "when": "editorTextFocus",
+        "mac": "cmd+L cmd+C"
+      }
+    ],
     "menus": {
       "explorer/context": [
         {
