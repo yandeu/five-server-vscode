@@ -22,11 +22,11 @@ let fiveServer: FiveServer | undefined;
 let myStatusBarItem: vscode.StatusBarItem;
 let debug = false;
 
-const state = "vscode-five-server.state";
-const openCommand = "vscode-five-server.open";
-const startCommand = "vscode-five-server.start";
-const closeCommand = "vscode-five-server.close";
-const statusBarItemCommand = "vscode-five-server.statusBar";
+const state = "fiveServer.state";
+const openCommand = "fiveServer.open";
+const startCommand = "fiveServer.start";
+const closeCommand = "fiveServer.close";
+const statusBarItemCommand = "fiveServer.statusBar";
 
 const page = {
   current: { text: "", fileName: "" },

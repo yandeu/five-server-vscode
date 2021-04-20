@@ -56,27 +56,27 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-five-server.start",
+        "command": "fiveServer.start",
         "title": "Five-Server: Start"
       },
       {
-        "command": "vscode-five-server.close",
+        "command": "fiveServer.close",
         "title": "Five-Server: Close"
       },
       {
-        "command": "vscode-five-server.open",
+        "command": "fiveServer.open",
         "title": "Open with Five Server"
       }
     ],
     "keybindings": [
       {
-        "command": "vscode-five-server.open",
+        "command": "fiveServer.open",
         "key": "alt+L alt+O",
         "when": "editorTextFocus",
         "mac": "cmd+L cmd+O"
       },
       {
-        "command": "vscode-five-server.close",
+        "command": "fiveServer.close",
         "key": "alt+L alt+C",
         "when": "editorTextFocus",
         "mac": "cmd+L cmd+C"
@@ -85,13 +85,13 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "vscode-five-server.open",
+          "command": "fiveServer.open",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "command": "vscode-five-server.open",
+          "command": "fiveServer.open",
           "group": "navigation"
         }
       ]
