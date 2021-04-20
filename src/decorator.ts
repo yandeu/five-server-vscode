@@ -67,7 +67,7 @@ export const refreshDecorations = (
 
   decorationsDebounce = setTimeout(() => {
     getEditors(fileName).forEach((editor) => {
-      editor.setDecorations(decorationType, decorations[hash]);
+      editor.setDecorations(decorationType, decorations[hash] || []);
     });
   }, delay);
 };
