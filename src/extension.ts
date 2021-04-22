@@ -9,7 +9,7 @@ import { PTY } from "./pty";
 import { join, extname, basename } from "path";
 
 import { decorate, refreshDecorations } from "./decorator";
-import { colors } from "./helpers";
+import { assignVSCodeConfiguration, colors, namespace } from "./helpers";
 
 let openURL = "";
 let pty: PTY;
@@ -22,11 +22,11 @@ let fiveServer: FiveServer | undefined;
 let myStatusBarItem: vscode.StatusBarItem;
 let debug = false;
 
-const state = "fiveServer.state";
-const openCommand = "fiveServer.open";
-const startCommand = "fiveServer.start";
-const closeCommand = "fiveServer.close";
-const statusBarItemCommand = "fiveServer.statusBar";
+const state = `${namespace}.state`;
+const openCommand = `${namespace}.open`;
+const startCommand = `${namespace}.start`;
+const closeCommand = `${namespace}.close`;
+const statusBarItemCommand = `${namespace}.statusBar`;
 
 const page = {
   current: { text: "", fileName: "" },
@@ -261,20 +261,22 @@ export function activate(context: vscode.ExtensionContext) {
 
     // @ts-ignore
     message.removeListener("message", messageHandler);
-
     // @ts-ignore
     message.addListener("message", messageHandler);
 
     context.workspaceState.update(state, "loading");
     updateStatusBarItem(context);
 
+    // reset config
     config = {};
+    // get config from VSCode
+    config = assignVSCodeConfiguration();
 
     workspace = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
 
     if (workspace) {
       // Get configFile for "root, injectBody and highlight"
-      config = await getConfigFile(true, workspace);
+      config = { ...config, ...(await getConfigFile(true, workspace)) };
       if (config && config.root) root = config.root;
       else root = "";
 

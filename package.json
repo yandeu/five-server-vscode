@@ -95,6 +95,43 @@
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "title": "Five Server",
+      "properties": {
+        "fiveServer.browser": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Open a specific browser instead of the default one. `string[]`"
+        },
+        "fiveServer.ignore": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Files/Folders to ignore from watching. `Array<string | RegExp | Glob>`\n\r*dotfiles, node_modules, bower_components and jspm_packages are excluded by default*"
+        },
+        "fiveServer.navigate": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Navigates your browser automatically to the current working file. `boolean`"
+        },
+        "fiveServer.php.executable": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to PHP executable. `string`"
+        },
+        "fiveServer.php.ini": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to php.ini file. `string`"
+        },
+        "fiveServer.port": {
+          "type": "number",
+          "default": 5555,
+          "minimum": 0,
+          "maximum": 65535,
+          "markdownDescription": "Set the server port. `number`\n\r*usually between 3000 and 9999*"
+        }
+      }
     }
   },
   "scripts": {

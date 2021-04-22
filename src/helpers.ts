@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 
+export const namespace = "fiveServer";
+
 export const isDarkTheme = () => {
   const theme = vscode.window.activeColorTheme;
   return theme.kind === vscode.ColorThemeKind.Dark;
@@ -20,4 +22,18 @@ export const strToHash = (s: string) => {
     hash |= 0; // Convert to 32bit integer
   }
   return Math.abs(hash).toString(32);
+};
+
+export const getConfig = <T>(config: string): T =>
+  vscode.workspace.getConfiguration().get(`${namespace}.${config}`) as T;
+
+export const assignVSCodeConfiguration = () => {
+  const browser = <string[]>getConfig("browser");
+  const ignore = <string[]>getConfig("ignore");
+  const navigate = <boolean>getConfig("navigate");
+  const php = <string>getConfig("php.executable");
+  const phpIni = <string>getConfig("php.ini");
+  const port = <number>getConfig("port");
+
+  return { browser, ignore, navigate, php, phpIni, port };
 };
