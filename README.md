@@ -24,7 +24,7 @@
   </a>
 </p>
 
-- ⚡️ **Updates your .html instantly** while typing on your keyboard
+- ⚡️ **Updates your files instantly** while typing on your keyboard
 - ⬢ Remote displays the logs of your browser/phone in your terminal
 - 💡 Highlights the code you are working on in your browser
 - 🚀 Navigates your browser automatically to the current editing file
@@ -83,7 +83,7 @@ Turn them on by configuring a `fiveserver.config.js` file in the root of your wo
 
 Note:
 
-- **Instant Updates** & **Highlight** work only with `.html` files.
+- **Instant Update** & **Highlight** works with `.html` and `.php` files.
 - All remote logs will be visible in a new Terminal called "Five Server".
 - The features `highlight`, `injectBody` and `remoteLogs` are disable by default.
 - To use the `highlight` feature, `injectBody` has to be activated.

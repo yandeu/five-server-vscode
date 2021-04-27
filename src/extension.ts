@@ -72,11 +72,11 @@ const shouldNavigate = (file: string | undefined, text: string | undefined) => {
   if (!file) return;
   if (!text) return;
   if (config && config.navigate === false) return false;
-  if (!isPhp(file) && !isHtml(file)) return false;
+  if (!isHtml(file) && !isPhp(file)) return false;
 
   // TODO(yandeu): fix this block
   // do not navigate to a .html file that does not contain the required tags.
-  if (isHtml(file) && !containsTags(text)) {
+  if ((isHtml(file) || isPhp(file)) && !containsTags(text)) {
     message.pretty(`File: ${file} does not contain required HTML tags.`, {
       id: "vscode",
     });
@@ -126,7 +126,7 @@ export function activate(context: vscode.ExtensionContext) {
     const fileName = e.textEditor.document.fileName;
     const text = e.textEditor.document.getText();
 
-    if (!isHtml(fileName)) return;
+    if (!isHtml(fileName) && !isPhp(fileName)) return;
     if (!shouldInjectBody()) return;
 
     updatePage(fileName, text);
@@ -159,7 +159,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.workspace.onDidChangeTextDocument((e) => {
     if (!fiveServer?.isRunning) return;
 
-    if (!isHtml(e.document.fileName)) return;
+    if (!isHtml(e.document.fileName) && !isPhp(e.document.fileName)) return;
     if (!shouldInjectBody()) return;
 
     updatePage(e.document.fileName, e.document.getText());
@@ -169,11 +169,10 @@ export function activate(context: vscode.ExtensionContext) {
   const updateBody = (fileName: string) => {
     if (page.current.fileName !== page.last.fileName) return;
 
-    if (!isHtml(fileName)) return;
+    if (!isHtml(fileName) && !isPhp(fileName)) return;
     if (!shouldInjectBody()) return;
 
-    // @ts-ignore // will be available in five-server@0.0.21
-    fiveServer?.parseBody?.updateBody(
+    fiveServer?.parseBody.updateBody(
       fileName,
       page.current.text,
       shouldHighlight(fileName),
@@ -227,36 +226,13 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   const startServer = async (uri: vscode.Uri) => {
+    let startWorkers = false;
+
     if (!pty) pty = new PTY();
+
     if (!fiveServer) {
       fiveServer = new FiveServer();
-
-      // @ts-ignore // available in five-server@0.0.21
-      fiveServer.parseBody?.workers.on("message", (msg: any) => {
-        const json = JSON.parse(msg);
-
-        if (json.report && json.report.results) {
-          const results = json.report.results;
-
-          if (results.length === 0) {
-            decorate(page.current.fileName, [], colors.yellow);
-            return;
-          }
-
-          const htmlErrors = results[0].messages.map((m: any) => {
-            const { message, ruleId, line } = m;
-            return { message, ruleId, line };
-          });
-
-          decorate(
-            page.current.fileName,
-            htmlErrors.map((e: any) => {
-              return { text: `// ${e.message}`, line: e.line };
-            }),
-            colors.yellow
-          );
-        }
-      });
+      startWorkers = true;
     }
 
     // @ts-ignore
@@ -361,6 +337,35 @@ export function activate(context: vscode.ExtensionContext) {
     openURL = fiveServer.openURL;
     context.workspaceState.update(state, "on");
     updateStatusBarItem(context);
+
+    // start workers
+    if (startWorkers) {
+      fiveServer.parseBody.workers.on("message", (msg: any) => {
+        const json = JSON.parse(msg);
+
+        if (json.report && json.report.results) {
+          const results = json.report.results;
+
+          if (results.length === 0) {
+            decorate(page.current.fileName, [], colors.yellow);
+            return;
+          }
+
+          const htmlErrors = results[0].messages.map((m: any) => {
+            const { message, ruleId, line } = m;
+            return { message, ruleId, line };
+          });
+
+          decorate(
+            page.current.fileName,
+            htmlErrors.map((e: any) => {
+              return { text: `// ${e.message}`, line: e.line };
+            }),
+            colors.yellow
+          );
+        }
+      });
+    }
   };
 
   const closeServer = () => {
