@@ -163,9 +163,9 @@
     "vscode-test": "^1.5.0"
   },
   "dependencies": {
-    "bufferutil": "^4.0.1",
+    "bufferutil": "^4.0.3",
     "five-server": "0.0.24",
-    "utf-8-validate": "^5.0.2"
+    "utf-8-validate": "^5.0.5"
   },
   "bugs": {
     "url": "https://github.com/yandeu/five-server/discussions"
