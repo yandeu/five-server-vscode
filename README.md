@@ -45,6 +45,11 @@
 2. Right-Click on an open `.html` file > **Open with Five Server**
 3. Right-Click an `.html` file in the Sidebar > **Open with Five Server**
 
+## Videos
+
+- [Instant Update](https://youtu.be/3-zKYNrxKOk)
+- [Instant Update (with PHP)](https://youtu.be/4s7q5chX-e0)
+
 ## Quick Test
 
 Something is not working? Try the simple setup below:
