@@ -39,11 +39,13 @@
 
 ## Get Started
 
-3 ways to start your live server.
+4 ways to start your live server.
 
 1. Click **Go Live** in the Status Bar (bottom of VSCode)
-2. Right-Click on an open `.html` file > **Open with Five Server**
-3. Right-Click an `.html` file in the Sidebar > **Open with Five Server**
+2. Right-Click a Open File > **Open with Five Server**
+3. Right-Click a File in the Explorer > **Open with Five Server**
+4. Right-Click a Folder in the Explorer > **Open with Five Server (root)**  
+   _(will set the current folder as root until you stop the server)_
 
 ## Videos
 

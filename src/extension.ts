@@ -15,6 +15,7 @@ let openURL = "";
 let pty: PTY;
 let activeFileName = "";
 let root: string = "";
+let _root: string | null = null;
 let workspace: string | undefined;
 let rootAbsolute: string;
 let config: LiveServerParams = {};
@@ -24,6 +25,7 @@ let debug = false;
 
 const state = `${namespace}.state`;
 const openCommand = `${namespace}.open`;
+const openRootCommand = `${namespace}.openRoot`;
 const startCommand = `${namespace}.start`;
 const closeCommand = `${namespace}.close`;
 const statusBarItemCommand = `${namespace}.statusBar`;
@@ -251,9 +253,16 @@ export function activate(context: vscode.ExtensionContext) {
     workspace = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
 
     if (workspace) {
-      // Get configFile for "root, injectBody and highlight"
+      // get file stat (if uri is available)
+      const stat = uri ? await vscode.workspace.fs.stat(uri) : null;
+      // open directory as root (1 = File; 2 = Directory)
+      if (stat?.type === 2) _root = uri.fsPath.replace(workspace, "");
+
+      // get configFile for "root, injectBody and highlight"
       config = { ...config, ...(await getConfigFile(true, workspace)) };
-      if (config && config.root) root = config.root;
+
+      if (_root) root = _root;
+      else if (config && config.root) root = config.root;
       else root = "";
 
       // @ts-ignore
@@ -375,6 +384,9 @@ export function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     message.removeListener("message", messageHandler);
 
+    // reset tmp root
+    _root = null;
+
     if (fiveServer) {
       fiveServer.shutdown().then(() => {
         // @ts-ignore
@@ -384,6 +396,7 @@ export function activate(context: vscode.ExtensionContext) {
         updateStatusBarItem(context);
       });
     }
+
     if (pty) {
       pty.dispose();
       // @ts-ignore
@@ -403,6 +416,9 @@ export function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(openCommand, startServer)
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(openRootCommand, startServer)
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(closeCommand, closeServer)

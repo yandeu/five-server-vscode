@@ -66,11 +66,15 @@
       {
         "command": "fiveServer.open",
         "title": "Open with Five Server"
+      },
+      {
+        "command": "fiveServer.openRoot",
+        "title": "Open with Five Server (root)"
       }
     ],
     "keybindings": [
       {
-        "command": "fiveServer.open",
+        "command": "fiveServer.start",
         "key": "alt+L alt+O",
         "when": "editorTextFocus",
         "mac": "cmd+L cmd+O"
@@ -86,7 +90,13 @@
       "explorer/context": [
         {
           "command": "fiveServer.open",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "!explorerResourceIsFolder"
+        },
+        {
+          "command": "fiveServer.openRoot",
+          "group": "navigation",
+          "when": "explorerResourceIsFolder"
         }
       ],
       "editor/context": [
