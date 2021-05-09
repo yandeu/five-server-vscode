@@ -16,19 +16,21 @@ export class PTY {
     this.lastWrite = write;
   }
 
-  constructor() {
+  constructor(open = true) {
     this.writeEmitter = new vscode.EventEmitter<string>();
 
     const pty: vscode.Pseudoterminal = {
       onDidWrite: this.writeEmitter.event,
       open: () => {},
-      close: () => {},
+      close: () => {
+        this.writeEmitter.dispose();
+      },
       handleInput: (data) =>
         this.writeEmitter.fire(data === "\r" ? "\r\n" : data + "\r\n"),
     };
 
     this.terminal = vscode.window.createTerminal({ name: "Five Server", pty });
-    this.terminal.show();
+    if (open) this.terminal.show();
 
     // hide cursor
     this.terminal.sendText("\u001B[?25l");
@@ -36,6 +38,5 @@ export class PTY {
 
   dispose() {
     this.terminal.dispose();
-    this.writeEmitter.dispose();
   }
 }

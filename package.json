@@ -124,6 +124,10 @@
           "default": true,
           "markdownDescription": "Navigates your browser automatically to the current working file. `boolean`"
         },
+        "fiveServer.openTerminal": {
+          "type": "boolean",
+          "default": true
+        },
         "fiveServer.php.executable": {
           "type": "string",
           "default": "",

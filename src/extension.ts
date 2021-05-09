@@ -9,7 +9,12 @@ import { PTY } from "./pty";
 import { join, extname, basename } from "path";
 
 import { decorate, refreshDecorations } from "./decorator";
-import { assignVSCodeConfiguration, colors, namespace } from "./helpers";
+import {
+  assignVSCodeConfiguration,
+  colors,
+  getConfig,
+  namespace,
+} from "./helpers";
 
 let openURL = "";
 let pty: PTY;
@@ -230,7 +235,7 @@ export function activate(context: vscode.ExtensionContext) {
   const startServer = async (uri: vscode.Uri) => {
     let startWorkers = false;
 
-    if (!pty) pty = new PTY();
+    if (!pty) pty = new PTY(getConfig("openTerminal"));
 
     if (!fiveServer) {
       fiveServer = new FiveServer();
