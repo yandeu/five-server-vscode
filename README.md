@@ -52,6 +52,13 @@
 - [Instant Update](https://youtu.be/3-zKYNrxKOk)
 - [Instant Update (with PHP)](https://youtu.be/4s7q5chX-e0)
 
+## More Videos
+
+Take a look at some other helpful packages provided by the Five Server Project.
+
+- [Generate Static Site](https://youtu.be/6kwvQHiWikY)
+- [Wanilla (Include Tags)](https://youtu.be/UbXaGvjI8l8)
+
 ## Quick Test
 
 Something is not working? Try the simple setup below:
