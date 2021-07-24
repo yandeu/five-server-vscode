@@ -1,13 +1,17 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
-import FiveServer, { LiveServerParams } from "five-server";
+import type FiveServer from "five-server";
+import type { LiveServerParams } from "five-server";
+
 import { getConfigFile } from "five-server/lib/misc";
 import { message } from "five-server/lib/msg";
+
 import { PTY } from "./pty";
 import { join, extname, basename } from "path";
-
 import { decorate, refreshDecorations } from "./decorator";
 import {
   assignVSCodeConfiguration,
@@ -235,10 +239,14 @@ export function activate(context: vscode.ExtensionContext) {
   const startServer = async (uri: vscode.Uri) => {
     let startWorkers = false;
 
+    context.workspaceState.update(state, "loading");
+    updateStatusBarItem(context);
+
     if (!pty) pty = new PTY(getConfig("openTerminal"));
 
     if (!fiveServer) {
-      fiveServer = new FiveServer();
+      const FiveServer = await import("five-server");
+      fiveServer = new FiveServer.default();
       startWorkers = true;
     }
 
@@ -246,9 +254,6 @@ export function activate(context: vscode.ExtensionContext) {
     message.removeListener("message", messageHandler);
     // @ts-ignore
     message.addListener("message", messageHandler);
-
-    context.workspaceState.update(state, "loading");
-    updateStatusBarItem(context);
 
     // reset config
     config = {};
