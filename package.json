@@ -90,19 +90,19 @@
       "explorer/context": [
         {
           "command": "fiveServer.open",
-          "group": "navigation",
+          "group": "navigation@10",
           "when": "!explorerResourceIsFolder"
         },
         {
           "command": "fiveServer.openRoot",
-          "group": "navigation",
+          "group": "navigation@10",
           "when": "explorerResourceIsFolder"
         }
       ],
       "editor/context": [
         {
           "command": "fiveServer.open",
-          "group": "navigation"
+          "group": "navigation@10"
         }
       ]
     },
