@@ -94,7 +94,7 @@ The setup above works but your project not?
 
 ## Features
 
-💡 Most **new features** are disabled by default.  
+💡 Most **awesome features** are disabled by default.  
 Turn them on by configuring a `fiveserver.config.js` file in the root of your workspace.
 
 Note:
@@ -107,7 +107,7 @@ Note:
 - To temporarily disable `highlight` for a single HTML Tag, add a **H**.  
   Example: `<div H>Don't highlight me</div>`
 
-Config File:
+Config File Example:
 
 ```js
 // fiveserver.config.js
@@ -128,21 +128,13 @@ module.exports = {
 - Check all available options for the **Config File** in [`/src/types.ts`](https://github.com/yandeu/five-server/blob/main/src/types.ts).
 - Check all available colors for the **remoteLogs** in [`/src/colors.ts`](https://github.com/yandeu/five-server/blob/main/src/colors.ts).
 
-## Quick Q&A
-
-- Why can't I set the configuration inside VSCode?  
-  _Simply because I haven't added it yet._
-
-- Why can't I use keyboard shortcuts?  
-  _Simply because I haven't added it yet._
-
 ## Issues
 
 Five Server is still in development. New versions are expected to be released weekly. Issues you have now, will probably be resolved soon.
 
 ### Known Issues
 
-- `injectBody` does not work well when using inline JavaScript inside `<body>`. (fixed soon)  
+- Sometimes `injectBody` does not work well when using inline JavaScript inside `<body>`.  
   As a workaround, execute your inline scripts after Five Server is connected:
 
 ```html
