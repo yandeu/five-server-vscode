@@ -164,7 +164,7 @@
   },
   "dependencies": {
     "bufferutil": "^4.0.3",
-    "five-server": "^0.0.29",
+    "five-server": "^0.0.30",
     "utf-8-validate": "^5.0.5"
   },
   "devDependencies": {
