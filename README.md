@@ -51,6 +51,7 @@
 
 - [Instant Update](https://youtu.be/3-zKYNrxKOk)
 - [Instant Update (with PHP)](https://youtu.be/4s7q5chX-e0)
+- [New Highlight Styles](https://youtu.be/zlKxvw-vy_M)
 
 ## More Videos
 
