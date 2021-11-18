@@ -17,10 +17,11 @@
     href="https://marketplace.visualstudio.com/items?itemName=yandeu.five-server"
     target="__blank"
   >
-    <img
-      src="https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server.svg?color=228cb3&amp;label="
-      alt="VERSION"
-    />
+    <img alt="VERSION" src="https://img.shields.io/visual-studio-marketplace/v/yandeu.five-server.svg?color=228cb3&amp;label="/>
+    <img alt="Visual Studio Marketplace Rating" src="https://img.shields.io/visual-studio-marketplace/r/yandeu.five-server?color=228cb3">
+  </a>
+  <a href="https://github.com/sponsors/yandeu" target="__blank">
+    <img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/yandeu?color=228cb3">
   </a>
 </p>
 
