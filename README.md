@@ -141,14 +141,14 @@ Five Server is still in development. New versions are expected to be released we
 
 ```html
 <script>
-  const five = document.querySelector('[data-id="five-server"]');
-
   const main = () => {
-    console.log("Some JavaScript Code...");
-  };
+    console.log("Some JavaScript Code...")
+  }
 
-  if (five) five.addEventListener("connected", main);
-  else window.addEventListener("load", main);
+  // wait for five-server to connect
+  const five = document.querySelector('[data-id="five-server"]')
+  if (five) five.addEventListener('connected', main)
+  else window.addEventListener('load', main)
 </script>
 ```
 
