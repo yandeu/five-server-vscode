@@ -121,7 +121,7 @@
         },
         "fiveServer.navigate": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "markdownDescription": "Navigates your browser automatically to the current working file. `boolean`"
         },
         "fiveServer.openTerminal": {

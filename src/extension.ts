@@ -82,7 +82,7 @@ const containsTags = (text: string) => {
 const shouldNavigate = (file: string | undefined, text: string | undefined) => {
   if (!file) return;
   if (!text) return;
-  if (config && config.navigate === false) return false;
+  if (config && config.navigate === true) return true;
   if (!isHtml(file) && !isPhp(file)) return false;
 
   // TODO(yandeu): fix this block

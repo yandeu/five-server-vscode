@@ -119,7 +119,7 @@ module.exports = {
   remoteLogs: true, // enable remoteLogs
   remoteLogs: "yellow", // enable remoteLogs and use the color yellow
   injectCss: false, // disable injecting css
-  navigate: false, // disable auto-navigation
+  navigate: true, // enable auto-navigation
 };
 ```
 
@@ -142,13 +142,13 @@ Five Server is still in development. New versions are expected to be released we
 ```html
 <script>
   const main = () => {
-    console.log("Some JavaScript Code...")
-  }
+    console.log("Some JavaScript Code...");
+  };
 
   // wait for five-server to connect
-  const five = document.querySelector('[data-id="five-server"]')
-  if (five) five.addEventListener('connected', main)
-  else window.addEventListener('load', main)
+  const five = document.querySelector('[data-id="five-server"]');
+  if (five) five.addEventListener("connected", main);
+  else window.addEventListener("load", main);
 </script>
 ```
 
