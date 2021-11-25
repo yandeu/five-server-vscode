@@ -82,7 +82,7 @@ const containsTags = (text: string) => {
 const shouldNavigate = (file: string | undefined, text: string | undefined) => {
   if (!file) return;
   if (!text) return;
-  if (config && config.navigate === true) return true;
+  if (config && config.navigate === false) return false;
   if (!isHtml(file) && !isPhp(file)) return false;
 
   // TODO(yandeu): fix this block
@@ -93,8 +93,9 @@ const shouldNavigate = (file: string | undefined, text: string | undefined) => {
     });
     return false;
   }
-
-  return true;
+  
+  if (config && config.navigate === true) return true;
+  return false;
 };
 
 // highlight only .html files
