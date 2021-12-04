@@ -79,13 +79,12 @@ const containsTags = (text: string) => {
 };
 
 // navigate to .html and .php files
-const shouldNavigate = (file: string | undefined, text: string | undefined) => {
-  if (!file) return;
-  if (!text) return;
+const shouldNavigate = (file?: string, text?: string): boolean => {
+  if (!file) return false;
+  if (!text) return false;
   if (config && config.navigate === false) return false;
   if (!isHtml(file) && !isPhp(file)) return false;
 
-  // TODO(yandeu): fix this block
   // do not navigate to a .html file that does not contain the required tags.
   if ((isHtml(file) || isPhp(file)) && !containsTags(text)) {
     message.pretty(`File: ${file} does not contain required HTML tags.`, {
@@ -93,7 +92,7 @@ const shouldNavigate = (file: string | undefined, text: string | undefined) => {
     });
     return false;
   }
-  
+
   if (config && config.navigate === true) return true;
   return false;
 };
