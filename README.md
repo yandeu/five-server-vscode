@@ -54,15 +54,6 @@
 - [Instant Update (with PHP)](https://youtu.be/4s7q5chX-e0)
 - [New Highlight Styles](https://youtu.be/zlKxvw-vy_M)
 
-## More Videos
-
-Take a look at some other helpful packages provided by the Five Server Project.  
-_Poor video quality but highly informative!_
-
-- [Generate Static Site](https://youtu.be/6kwvQHiWikY)
-- [Wanilla (Include Tags)](https://youtu.be/UbXaGvjI8l8)
-- [Wanilla Machine (no video yet)](https://www.npmjs.com/package/wanilla-machine)
-
 ## Quick Test
 
 Something is not working? Try the simple setup below:
