@@ -121,10 +121,6 @@ module.exports = {
 - Check all available options for the **Config File** in [`/src/types.ts`](https://github.com/yandeu/five-server/blob/main/src/types.ts).
 - Check all available colors for the **remoteLogs** in [`/src/colors.ts`](https://github.com/yandeu/five-server/blob/main/src/colors.ts).
 
-## Issues
-
-Five Server is still in development. New versions are expected to be released weekly. Issues you have now, will probably be resolved soon.
-
 ### Known Issues
 
 - Sometimes `injectBody` does not work well when using inline JavaScript inside `<body>`.  
