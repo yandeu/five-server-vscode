@@ -9,7 +9,7 @@
 <h1 align="center">Five Server</h1>
 
 <p align="center">
-  Maintained fork of <em><b>live server</b></em>
+  A better <em><b>live server</b></em>
 </p>
 
 <p align="center">

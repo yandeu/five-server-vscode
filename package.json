@@ -1,7 +1,7 @@
 {
   "name": "five-server",
-  "displayName": "Five Server (Live Server)",
-  "description": "Dev Server with Live Reload. (Maintained Fork of Live Server)",
+  "displayName": "Live Server (Five Server)",
+  "description": "A better Live Server with instant updates, highlights and PHP support.",
   "version": "0.1.2",
   "publisher": "yandeu",
   "icon": "img/icon-star.png",
