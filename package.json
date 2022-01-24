@@ -2,7 +2,7 @@
   "name": "five-server",
   "displayName": "Live Server (Five Server)",
   "description": "A better Live Server with instant updates, highlights and PHP support.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "yandeu",
   "icon": "img/icon-star.png",
   "license": "SEE LICENSE IN LICENSE",
@@ -149,7 +149,7 @@
     }
   },
   "scripts": {
-    "make-package": "npm run prune && npm i && vsce package",
+    "make-package": "npm run prune && npm i && npx -y vsce@latest package",
     "clean": "rimraf out",
     "prune": "rimraf dist out node_modules package-lock.json",
     "compile": "tsc -p ./",
