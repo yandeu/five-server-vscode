@@ -85,6 +85,10 @@ The setup above works but your project not?
 - Make sure you open a folder in VSCode and NOT just a single file.
 - All these things can sometimes cause issues.
 
+## About PHP
+
+Although Five Server can render, display and live reload PHP, it does not provide a full PHP server. If you want to develop a big PHP app, you manually have to link the client-side Five Server script with your PHP files. See [five-server-with-php](https://github.com/yandeu/five-server-with-php).
+
 ## Features
 
 💡 Most **awesome features** are disabled by default.  
