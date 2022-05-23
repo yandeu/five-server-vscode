@@ -385,6 +385,8 @@ export function activate(context: vscode.ExtensionContext) {
         }
       });
     }
+
+    return "done";
   };
 
   const closeServer = () => {
@@ -412,6 +414,8 @@ export function activate(context: vscode.ExtensionContext) {
       // @ts-ignore
       pty = null;
     }
+
+    return "done";
   };
 
   const toggleServer = () => {
