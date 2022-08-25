@@ -2,7 +2,7 @@
 	"name": "five-server",
 	"displayName": "Live Server (Five Server)",
 	"description": "A better Live Server with instant updates, highlights and PHP support.",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"publisher": "yandeu",
 	"icon": "img/icon-star.png",
 	"license": "SEE LICENSE IN LICENSE",
@@ -164,7 +164,7 @@
 	},
 	"dependencies": {
 		"bufferutil": "^4.0.5",
-		"five-server": "^0.1.3",
+		"five-server": "^0.1.6",
 		"utf-8-validate": "^5.0.7"
 	},
 	"devDependencies": {
