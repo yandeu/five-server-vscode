@@ -348,6 +348,8 @@ export function activate(context: vscode.ExtensionContext) {
 
       // start a simple server
       await fiveServer.start({
+        ...config,
+        injectBody: shouldInjectBody(),
         root,
         open: file,
       });
