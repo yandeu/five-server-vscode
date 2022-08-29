@@ -138,6 +138,11 @@
 					"default": "",
 					"markdownDescription": "Absolute path to php.ini file. `string`"
 				},
+				"fiveServer.host": {
+					"type": "string",
+					"default": "0.0.0.0",
+					"markdownDescription": "Set the server host. `string`"
+				},
 				"fiveServer.port": {
 					"type": "number",
 					"default": 5555,
