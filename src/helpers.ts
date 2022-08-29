@@ -33,7 +33,8 @@ export const assignVSCodeConfiguration = () => {
   const navigate = <boolean>getConfig("navigate");
   const php = <string>getConfig("php.executable");
   const phpIni = <string>getConfig("php.ini");
+  const host = <string>getConfig("host");
   const port = <number>getConfig("port");
 
-  return { browser, ignore, navigate, php, phpIni, port };
+  return { browser, ignore, navigate, php, phpIni, host, port };
 };
