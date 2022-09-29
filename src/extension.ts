@@ -207,16 +207,15 @@ export function activate(context: vscode.ExtensionContext) {
     }
   };
 
-  const updateStatusBarItem = (context: vscode.ExtensionContext) => {
-    const _state = context.workspaceState.get(state);
-
-    if (_state === "on") {
+  const updateStatusBarItem = (status: String) => {
+    if (status === "on") {
       myStatusBarItem.text = `$(zap) ${openURL}`;
       myStatusBarItem.tooltip = "Close Five Server";
       myStatusBarItem.color = colors.yellow;
       myStatusBarItem.show();
-    } else if (_state === "loading") {
+    } else if (status === "loading") {
       myStatusBarItem.text = `$(sync~spin) Going Live...`;
+      myStatusBarItem.tooltip = "Loading Five Server";
       myStatusBarItem.color = undefined;
       myStatusBarItem.show();
     } else {
@@ -239,8 +238,11 @@ export function activate(context: vscode.ExtensionContext) {
   const startServer = async (uri: vscode.Uri) => {
     let startWorkers = false;
 
+    updateStatusBarItem("loading");
     context.workspaceState.update(state, "loading");
-    updateStatusBarItem(context);
+
+    // display loading text
+    await new Promise((r) => setTimeout(r, 250));
 
     if (!pty) pty = new PTY(getConfig("openTerminal"));
 
@@ -338,8 +340,8 @@ export function activate(context: vscode.ExtensionContext) {
       if (!fileName) {
         message.pretty("Could not detect a valid file.", { id: "vscode" });
 
+        updateStatusBarItem("off");
         context.workspaceState.update(state, "off");
-        updateStatusBarItem(context);
         return;
       }
 
@@ -356,8 +358,8 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     openURL = fiveServer.openURL;
+    updateStatusBarItem("on");
     context.workspaceState.update(state, "on");
-    updateStatusBarItem(context);
 
     // start workers
     if (startWorkers) {
@@ -392,8 +394,8 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   const closeServer = () => {
+    updateStatusBarItem("loading");
     context.workspaceState.update(state, "loading");
-    updateStatusBarItem(context);
 
     // @ts-ignore
     message.removeListener("message", messageHandler);
@@ -406,8 +408,8 @@ export function activate(context: vscode.ExtensionContext) {
         // @ts-ignore
         fiveServer = null;
 
+        updateStatusBarItem("off");
         context.workspaceState.update(state, "off");
-        updateStatusBarItem(context);
       });
     }
 
@@ -449,7 +451,7 @@ export function activate(context: vscode.ExtensionContext) {
     0
   );
   myStatusBarItem.command = statusBarItemCommand;
-  updateStatusBarItem(context);
+  updateStatusBarItem("off");
   context.subscriptions.push(myStatusBarItem);
 }
 
