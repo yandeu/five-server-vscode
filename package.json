@@ -2,7 +2,7 @@
 	"name": "five-server",
 	"displayName": "Live Server (Five Server)",
 	"description": "A better Live Server with instant updates, highlights and PHP support.",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"publisher": "yandeu",
 	"icon": "img/icon-star.png",
 	"license": "SEE LICENSE IN LICENSE",
