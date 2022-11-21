@@ -91,8 +91,8 @@ Although Five Server can render, display and live reload PHP, it does not provid
 
 ## Features
 
-💡 Most **awesome features** are disabled by default.  
-Turn them on by configuring a `fiveserver.config.js` file in the root of your workspace.
+💡 Most **advanced features** are enabled by default.  
+Turn them off by configuring a `fiveserver.config.js` file in the root of your workspace.
 
 Note:
 

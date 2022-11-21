@@ -109,6 +109,21 @@
 		"configuration": {
 			"title": "Five Server",
 			"properties": {
+				"fiveServer.injectBody": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Allow real-time updates by injecting the html body. `boolean`\n\r*needs to perform html validation*"
+				},
+				"fiveServer.highlight": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Highlights the html tag in the browser. `boolean`"
+				},
+				"fiveServer.navigate": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Navigates your browser automatically to the current working file. `boolean`"
+				},
 				"fiveServer.browser": {
 					"type": "array",
 					"default": [],
@@ -118,11 +133,6 @@
 					"type": "array",
 					"default": [],
 					"markdownDescription": "Files/Folders to ignore from watching. `Array<string | RegExp | Glob>`\n\r*dotfiles, node_modules, bower_components and jspm_packages are excluded by default*"
-				},
-				"fiveServer.navigate": {
-					"type": "boolean",
-					"default": false,
-					"markdownDescription": "Navigates your browser automatically to the current working file. `boolean`"
 				},
 				"fiveServer.openTerminal": {
 					"type": "boolean",

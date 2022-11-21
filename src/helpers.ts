@@ -35,6 +35,18 @@ export const assignVSCodeConfiguration = () => {
   const phpIni = <string>getConfig("php.ini");
   const host = <string>getConfig("host");
   const port = <number>getConfig("port");
+  const injectBody = <boolean>getConfig("injectBody");
+  const highlight = <boolean>getConfig("highlight");
 
-  return { browser, ignore, navigate, php, phpIni, host, port };
+  return {
+    browser,
+    ignore,
+    navigate,
+    php,
+    phpIni,
+    host,
+    port,
+    injectBody,
+    highlight,
+  };
 };
