@@ -111,12 +111,12 @@
 			"properties": {
 				"fiveServer.injectBody": {
 					"type": "boolean",
-					"default": true,
+					"default": false,
 					"markdownDescription": "Allow real-time updates by injecting the html body. `boolean`\n\r*needs to perform html validation*"
 				},
 				"fiveServer.highlight": {
 					"type": "boolean",
-					"default": true,
+					"default": false,
 					"markdownDescription": "Highlights the html tag in the browser. `boolean`"
 				},
 				"fiveServer.navigate": {
