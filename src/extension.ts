@@ -294,7 +294,7 @@ export function activate(context: vscode.ExtensionContext) {
         pty.write("File:", uri?.fsPath);
       }
 
-      if (workspace && typeof root !== "undefined" && uri?.fsPath) {
+      if (uri?.fsPath) {
         let file = uri.fsPath
           .replace(rootAbsolute, "")
           .replace(/^\\|^\//gm, "");
@@ -311,23 +311,35 @@ export function activate(context: vscode.ExtensionContext) {
         await fiveServer.start({
           ...config,
           injectBody: shouldInjectBody(),
-          open: file,
-          root,
-          workspace,
-          _cli: true,
-        });
-      } else {
-        if (debug) pty.write("Open:", "");
-
-        await fiveServer.start({
-          ...config,
-          injectBody: shouldInjectBody(),
+          open: config.open || file,
           root,
           workspace,
           _cli: true,
         });
       }
-    } else if (!workspace) {
+      //
+      else {
+        let file = "";
+
+        // get current open file
+        const fileName = vscode.window.activeTextEditor?.document.fileName;
+        if (fileName)
+          file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+
+        if (debug) pty.write("Open:", file);
+
+        await fiveServer.start({
+          ...config,
+          injectBody: shouldInjectBody(),
+          open: config.open || file,
+          root,
+          workspace,
+          _cli: true,
+        });
+      }
+    }
+    //
+    else if (!workspace) {
       // no workspace?
       // the user opened probably only a single file instead of a folder
       message.pretty(
