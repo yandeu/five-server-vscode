@@ -6,6 +6,9 @@
 	"publisher": "yandeu",
 	"icon": "img/icon-star.png",
 	"license": "SEE LICENSE IN LICENSE",
+	"sponsor": {
+		"url": "https://github.com/sponsors/yandeu?frequency=recurring#:~:text=a%20month"
+	},
 	"engines": {
 		"vscode": "^1.57.1"
 	},
