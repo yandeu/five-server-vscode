@@ -311,7 +311,7 @@ export function activate(context: vscode.ExtensionContext) {
         await fiveServer.start({
           ...config,
           injectBody: shouldInjectBody(),
-          open: config.open || file,
+          open: config.open !== undefined ? config.open : file,
           root,
           workspace,
           _cli: true,
@@ -331,7 +331,7 @@ export function activate(context: vscode.ExtensionContext) {
         await fiveServer.start({
           ...config,
           injectBody: shouldInjectBody(),
-          open: config.open || file,
+          open: config.open !== undefined ? config.open : file,
           root,
           workspace,
           _cli: true,
