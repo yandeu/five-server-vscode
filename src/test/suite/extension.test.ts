@@ -23,7 +23,7 @@ suite("Extension Test Suite", () => {
   });
 
   test("fetch index.html file", async () => {
-    const res = await fetch("http://localhost:5555");
+    const res = await fetch("http://localhost:8787");
     const html = await res.text();
 
     const content = /hello from test file/gm.test(html);

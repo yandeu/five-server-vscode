@@ -1,8 +1,8 @@
 {
 	"name": "five-server",
 	"displayName": "Live Server (Five Server)",
-	"description": "A better Live Server with instant updates, highlights and PHP support.",
-	"version": "0.1.13",
+	"description": "A better Live Server with instant updates, highlights and some PHP support.",
+	"version": "0.2.2",
 	"publisher": "yandeu",
 	"icon": "img/icon-star.png",
 	"license": "SEE LICENSE IN LICENSE",
@@ -10,7 +10,7 @@
 		"url": "https://github.com/sponsors/yandeu?frequency=recurring#:~:text=a%20month"
 	},
 	"engines": {
-		"vscode": "^1.57.1"
+		"vscode": "^1.64.0"
 	},
 	"categories": [
 		"Other"
@@ -158,7 +158,7 @@
 				},
 				"fiveServer.port": {
 					"type": "number",
-					"default": 5555,
+					"default": 5500,
 					"minimum": 0,
 					"maximum": 65535,
 					"markdownDescription": "Set the server port. `number`\n\r*usually between 3000 and 9999*"
@@ -167,7 +167,7 @@
 		}
 	},
 	"scripts": {
-		"make-package": "npm run prune && npm i && npx -y vsce@latest package",
+		"make-package": "npm run prune && npm i && npx -y @vscode/vsce@latest package",
 		"clean": "npx rimraf@3 out",
 		"prune": "npx rimraf@3 dist out node_modules package-lock.json",
 		"compile": "tsc -p ./",

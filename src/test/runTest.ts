@@ -30,9 +30,9 @@ async function main() {
     });
 
     // Download VS Code, unzip it and run the integration test
-    // (version 1.57.1 / May 2021)
+    // (version 1.64.0 / Jan 2022)
     await runTests({
-      version: "1.57.1",
+      version: "1.64.0",
       extensionDevelopmentPath,
       extensionTestsPath,
       launchArgs: [
