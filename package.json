@@ -53,7 +53,7 @@
 	},
 	"qna": "https://github.com/yandeu/five-server/discussions",
 	"activationEvents": [
-		"*"
+		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
