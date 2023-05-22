@@ -1,21 +1,71 @@
 import * as path from "path";
+import * as cp from "child_process";
 
-import { runTests } from "@vscode/test-electron";
+import {
+  downloadAndUnzipVSCode,
+  resolveCliArgsFromVSCodeExecutablePath,
+  runTests,
+} from "@vscode/test-electron";
+import { readFile } from "fs/promises";
 
 async function main() {
   try {
-    // The folder containing the Extension Manifest package.json
-    // Passed to `--extensionDevelopmentPath`
     const extensionDevelopmentPath = path.resolve(__dirname, "../../");
-
-    // The path to test runner
-    // Passed to --extensionTestsPath
     const extensionTestsPath = path.resolve(__dirname, "./suite/index");
-
     const testWorkspace = path.resolve(
       __dirname,
       "../../test-fixtures/workspace"
     );
+    console.log(path.resolve(__dirname, "../../package.json"));
+    const pkg = await readFile(
+      path.resolve(__dirname, "../../package.json"),
+      "utf-8"
+    );
+    const version = JSON.parse(pkg).version;
+
+    // Test the vsix package
+    const vscodeExecutablePath = await downloadAndUnzipVSCode(undefined);
+    const [cliPath, ...args] =
+      resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
+
+    // Use cp.spawn / cp.exec for custom setup
+    cp.spawnSync(cliPath, [...args, "--list-extensions"], {
+      encoding: "utf-8",
+      stdio: "inherit",
+    });
+
+    // Use cp.spawn / cp.exec for custom setup
+    cp.spawnSync(
+      cliPath,
+      [...args, "--uninstall-extension", "yandeu.five-server"],
+      {
+        encoding: "utf-8",
+        stdio: "inherit",
+      }
+    );
+
+    // Use cp.spawn / cp.exec for custom setup
+    cp.spawnSync(
+      cliPath,
+      [
+        ...args,
+        "--install-extension",
+        path.resolve(__dirname, `../../five-server-${version}.vsix`),
+      ],
+      {
+        encoding: "utf-8",
+        stdio: "inherit",
+      }
+    );
+
+    // Run the extension test
+    await runTests({
+      // Use the specified `code` executable
+      vscodeExecutablePath,
+      extensionDevelopmentPath: path.resolve(__dirname, "./mock"),
+      extensionTestsPath,
+      launchArgs: [testWorkspace],
+    });
 
     // Download VS Code, unzip it and run the integration test
     // (latest version)
@@ -30,9 +80,9 @@ async function main() {
     });
 
     // Download VS Code, unzip it and run the integration test
-    // (version 1.64.0 / Jan 2022)
+    // (version 1.64.2 / Jan 2022)
     await runTests({
-      version: "1.64.0",
+      version: "1.64.2",
       extensionDevelopmentPath,
       extensionTestsPath,
       launchArgs: [

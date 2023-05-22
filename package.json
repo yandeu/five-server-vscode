@@ -10,7 +10,7 @@
 		"url": "https://github.com/sponsors/yandeu?frequency=recurring#:~:text=a%20month"
 	},
 	"engines": {
-		"vscode": "^1.64.0"
+		"vscode": "^1.64.2"
 	},
 	"categories": [
 		"Other"
@@ -167,7 +167,7 @@
 		}
 	},
 	"scripts": {
-		"make-package": "npm run prune && npm i && npx -y @vscode/vsce@latest package",
+		"make-package": "npm ci && npm run compile && npx -y @vscode/vsce@latest package && npm test",
 		"clean": "npx rimraf@3 out",
 		"prune": "npx rimraf@3 dist out node_modules package-lock.json",
 		"compile": "tsc -p ./",
@@ -177,7 +177,6 @@
 		"format:write": "prettier --write src/** .vscode/**",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
-		"vscode:prepublish": "npm run test",
 		"test-compile": "tsc -p ./"
 	},
 	"dependencies": {
