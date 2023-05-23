@@ -5,7 +5,6 @@
 !img
 !node_modules/@yandeu/open-cjs/**
 !node_modules/fsevents/**
-!public
 !CHANGELOG.md
 !LICENSE
 !package.json
