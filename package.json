@@ -55,7 +55,7 @@
 	"activationEvents": [
 		"onStartupFinished"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/bundle/main.js",
 	"contributes": {
 		"commands": [
 			{
@@ -170,7 +170,7 @@
 		"make-package": "npm run compile && npx -y @vscode/vsce@latest package && npm test",
 		"clean": "npx rimraf@3 out",
 		"prune": "npx rimraf@3 dist out node_modules package-lock.json",
-		"compile": "tsc -p ./",
+		"compile": "tsc -p ./ && node ./build.mjs",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"format": "prettier --check src/** .vscode/**",
@@ -192,6 +192,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.4.0",
 		"@typescript-eslint/parser": "^5.4.0",
 		"@vscode/test-electron": "^2.1.3",
+		"esbuild": "^0.17.19",
 		"eslint": "^8.3.0",
 		"glob": "^7.2.0",
 		"mocha": "^9.1.3",
