@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - run: npm ci
+      - run: npm ci --force
       - run: npm run compile
       - run: npx -y @vscode/vsce@latest package
       - run: xvfb-run -a npm test

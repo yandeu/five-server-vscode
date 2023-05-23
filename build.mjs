@@ -11,7 +11,7 @@ await build({
   entryPoints: ['src/extension.ts'],
   bundle: true,
   outfile: "dist/bundle/main.js",
-  external: ["vscode", "@yandeu/open-cjs"],
+  external: ["vscode", "@yandeu/open-cjs", "fsevents"],
   format: "cjs",
   platform: "node",
   minify: true
