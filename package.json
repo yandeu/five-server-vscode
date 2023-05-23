@@ -172,7 +172,7 @@
 		"prune": "npx rimraf@3 dist out node_modules package-lock.json",
 		"compile": "tsc -p ./ && node ./build.mjs",
 		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
+		"pretest": "npm run compile && npx rimraf@3 ./dist/**/*.ts  && npm run lint",
 		"format": "prettier --check src/** .vscode/**",
 		"format:write": "prettier --write src/** .vscode/**",
 		"lint": "eslint src --ext ts",
