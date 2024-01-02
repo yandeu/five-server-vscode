@@ -55,7 +55,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./dist/bundle/main.js",
+  "main": "./dist/bundle/subdir/main.js",
   "contributes": {
     "commands": [
       {

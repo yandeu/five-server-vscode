@@ -15,9 +15,7 @@ const pause = (ms: number): Promise<void> => {
 
 suite("Extension Test Suite", () => {
   test("init testing", async () => {
-    vscode.window.showInformationMessage(
-      "Start all tests. Wait for onStartupFinished event."
-    );
+    vscode.window.showInformationMessage("Start all tests. Wait for onStartupFinished event.");
     return pause(5000);
   });
 

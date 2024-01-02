@@ -25,8 +25,7 @@ export class PTY {
       close: () => {
         this.writeEmitter.dispose();
       },
-      handleInput: (data) =>
-        this.writeEmitter.fire(data === "\r" ? "\r\n" : data + "\r\n"),
+      handleInput: (data) => this.writeEmitter.fire(data === "\r" ? "\r\n" : data + "\r\n"),
     };
 
     this.terminal = vscode.window.createTerminal({ name: "Five Server", pty });

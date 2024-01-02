@@ -13,12 +13,7 @@ import { message } from "five-server/lib/msg";
 import { PTY } from "./pty";
 import { join, extname, basename } from "path";
 import { decorate, refreshDecorations } from "./decorator";
-import {
-  assignVSCodeConfiguration,
-  colors,
-  getConfig,
-  namespace,
-} from "./helpers";
+import { assignVSCodeConfiguration, colors, getConfig, namespace } from "./helpers";
 
 let openURL = "";
 let pty: PTY;
@@ -187,7 +182,7 @@ export function activate(context: vscode.ExtensionContext) {
       fileName,
       page.current.text,
       shouldHighlight(fileName),
-      vscode.window.activeTextEditor?.selection.active
+      vscode.window.activeTextEditor?.selection.active,
     );
   };
 
@@ -284,10 +279,7 @@ export function activate(context: vscode.ExtensionContext) {
       rootAbsolute = join(workspace, root);
 
       if (debug) {
-        pty.write(
-          "DEBUG:",
-          '"workspace", "root" and "open" will be passed to fiveServer.start()'
-        );
+        pty.write("DEBUG:", '"workspace", "root" and "open" will be passed to fiveServer.start()');
         pty.write("Workspace:", workspace);
         pty.write("Root:", root);
         pty.write("Absolute (workspace + root):", rootAbsolute);
@@ -295,9 +287,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       if (uri?.fsPath) {
-        let file = uri.fsPath
-          .replace(rootAbsolute, "")
-          .replace(/^\\|^\//gm, "");
+        let file = uri.fsPath.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 
         const isFile = extname(file) !== "";
 
@@ -323,8 +313,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         // get current open file
         const fileName = vscode.window.activeTextEditor?.document.fileName;
-        if (fileName)
-          file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+        if (fileName) file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 
         if (debug) pty.write("Open:", file);
 
@@ -342,10 +331,9 @@ export function activate(context: vscode.ExtensionContext) {
     else if (!workspace) {
       // no workspace?
       // the user opened probably only a single file instead of a folder
-      message.pretty(
-        'No Workspace found! You probably opened a "single file" instead of a "folder".',
-        { id: "vscode" }
-      );
+      message.pretty('No Workspace found! You probably opened a "single file" instead of a "folder".', {
+        id: "vscode",
+      });
 
       // we get the path and filename from the window
       const fileName = vscode.window.activeTextEditor?.document.fileName;
@@ -396,7 +384,7 @@ export function activate(context: vscode.ExtensionContext) {
             htmlErrors.map((e: any) => {
               return { text: `// ${e.message}`, line: e.line };
             }),
-            colors.yellow
+            colors.yellow,
           );
         }
       });
@@ -441,27 +429,14 @@ export function activate(context: vscode.ExtensionContext) {
     else if (_state === "off") vscode.commands.executeCommand(startCommand);
   };
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(startCommand, startServer)
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(openCommand, startServer)
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(openRootCommand, startServer)
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(closeCommand, closeServer)
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(statusBarItemCommand, toggleServer)
-  );
+  context.subscriptions.push(vscode.commands.registerCommand(startCommand, startServer));
+  context.subscriptions.push(vscode.commands.registerCommand(openCommand, startServer));
+  context.subscriptions.push(vscode.commands.registerCommand(openRootCommand, startServer));
+  context.subscriptions.push(vscode.commands.registerCommand(closeCommand, closeServer));
+  context.subscriptions.push(vscode.commands.registerCommand(statusBarItemCommand, toggleServer));
 
   // create a new status bar item that we can now manage
-  myStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    0
-  );
+  myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 0);
   myStatusBarItem.command = statusBarItemCommand;
   updateStatusBarItem("off");
   context.subscriptions.push(myStatusBarItem);

@@ -24,7 +24,7 @@ export const decorate = (
     text: string;
     line: number;
   }[],
-  color: string
+  color: string,
 ) => {
   const hash = strToHash(fileName);
 
@@ -36,10 +36,7 @@ export const decorate = (
 
     decorations[hash].push({
       renderOptions: { after: { contentText: text, color } },
-      range: new Range(
-        new Position(line - 1, 1024),
-        new Position(line - 1, 1024)
-      ),
+      range: new Range(new Position(line - 1, 1024), new Position(line - 1, 1024)),
     });
   });
 
@@ -50,10 +47,7 @@ const decorationType = window.createTextEditorDecorationType({
   after: { margin: "0 0 0 1rem" },
 });
 
-export const refreshDecorations = (
-  fileName: string | undefined,
-  options: { delay?: number; force?: boolean } = {}
-) => {
+export const refreshDecorations = (fileName: string | undefined, options: { delay?: number; force?: boolean } = {}) => {
   if (!fileName) return;
 
   const { delay = 250, force = false } = options;
@@ -73,9 +67,7 @@ export const refreshDecorations = (
 };
 
 const getEditors = (fileName: string) => {
-  return window.visibleTextEditors.filter(
-    (editor) => editor.document.fileName === fileName
-  );
+  return window.visibleTextEditors.filter((editor) => editor.document.fileName === fileName);
 };
 
 export const clearDecorations = () => {

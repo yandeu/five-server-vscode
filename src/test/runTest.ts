@@ -1,32 +1,21 @@
 import * as path from "path";
 import * as cp from "child_process";
 
-import {
-  downloadAndUnzipVSCode,
-  resolveCliArgsFromVSCodeExecutablePath,
-  runTests,
-} from "@vscode/test-electron";
+import { downloadAndUnzipVSCode, resolveCliArgsFromVSCodeExecutablePath, runTests } from "@vscode/test-electron";
 import { readFile } from "fs/promises";
 
 async function main() {
   try {
     const extensionDevelopmentPath = path.resolve(__dirname, "../../");
     const extensionTestsPath = path.resolve(__dirname, "./suite/index");
-    const testWorkspace = path.resolve(
-      __dirname,
-      "../../test-fixtures/workspace"
-    );
+    const testWorkspace = path.resolve(__dirname, "../../test-fixtures/workspace");
     console.log(path.resolve(__dirname, "../../package.json"));
-    const pkg = await readFile(
-      path.resolve(__dirname, "../../package.json"),
-      "utf-8"
-    );
+    const pkg = await readFile(path.resolve(__dirname, "../../package.json"), "utf-8");
     const version = JSON.parse(pkg).version;
 
     // Test the vsix package
     const vscodeExecutablePath = await downloadAndUnzipVSCode(undefined);
-    const [cliPath, ...args] =
-      resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
+    const [cliPath, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
     // Use cp.spawn / cp.exec for custom setup
     cp.spawnSync(cliPath, [...args, "--list-extensions"], {
@@ -35,27 +24,19 @@ async function main() {
     });
 
     // Use cp.spawn / cp.exec for custom setup
-    cp.spawnSync(
-      cliPath,
-      [...args, "--uninstall-extension", "yandeu.five-server"],
-      {
-        encoding: "utf-8",
-        stdio: "inherit",
-      }
-    );
+    cp.spawnSync(cliPath, [...args, "--uninstall-extension", "yandeu.five-server"], {
+      encoding: "utf-8",
+      stdio: "inherit",
+    });
 
     // Use cp.spawn / cp.exec for custom setup
     cp.spawnSync(
       cliPath,
-      [
-        ...args,
-        "--install-extension",
-        path.resolve(__dirname, `../../five-server-${version}.vsix`),
-      ],
+      [...args, "--install-extension", path.resolve(__dirname, `../../five-server-${version}.vsix`)],
       {
         encoding: "utf-8",
         stdio: "inherit",
-      }
+      },
     );
 
     // Run the extension test
