@@ -167,8 +167,8 @@
     }
   },
   "scripts": {
-    "make-package": "npm run compile && npx -y @vscode/vsce@latest package && npm test",
-    "clean": "npx rimraf@3 out",
+    "make-package": "npm run clean && npm run compile && npx -y @vscode/vsce@latest package && npm test",
+    "clean": "npx -y rimraf@3 out && npx -y rimraf@3 dist",
     "prune": "npx rimraf@3 dist out node_modules package-lock.json",
     "compile": "tsc -p ./ && node ./build.mjs",
     "watch": "tsc -watch -p ./",

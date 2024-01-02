@@ -13,7 +13,7 @@ const pause = (ms: number): Promise<void> => {
   });
 };
 
-suite("Extension Test Suite", () => {
+suite("Extension Test Suite 2", () => {
   test("init testing", async () => {
     vscode.window.showInformationMessage("Start all tests. Wait for onStartupFinished event.");
     return pause(5000);
@@ -25,12 +25,12 @@ suite("Extension Test Suite", () => {
     // return pause(5000);
   });
 
-  test("fetch index.html file", async () => {
+  test("opens file explorer", async () => {
     const res = await fetch("http://localhost:8787");
     const html = await res.text();
     await pause(2000);
-    const content = /hello from test file/gm.test(html);
-    assert.strictEqual(content, true);
+    assert.strictEqual(/www/gm.test(html), true);
+    assert.strictEqual(/fiveserver.config.cjs/gm.test(html), true);
     return;
   });
 

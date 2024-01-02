@@ -2,6 +2,8 @@ import { build } from "esbuild";
 import { cp } from "fs/promises";
 
 // "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+await cp("./node_modules/five-server/public", "./dist/public", { recursive: true });
+await cp("./node_modules/five-server/client", "./dist/client", { recursive: true });
 await cp("./node_modules/five-server/public", "./dist/bundle/public", { recursive: true });
 await cp("./node_modules/five-server/client", "./dist/bundle/client", { recursive: true });
 

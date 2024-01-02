@@ -8,7 +8,9 @@ async function main() {
   try {
     const extensionDevelopmentPath = path.resolve(__dirname, "../../");
     const extensionTestsPath = path.resolve(__dirname, "./suite/index");
+    const extensionTestsPath2 = path.resolve(__dirname, "./suite2/index");
     const testWorkspace = path.resolve(__dirname, "../../test-fixtures/workspace");
+    const testWorkspace2 = path.resolve(__dirname, "../../test-fixtures/workspace2");
     console.log(path.resolve(__dirname, "../../package.json"));
     const pkg = await readFile(path.resolve(__dirname, "../../package.json"), "utf-8");
     const version = JSON.parse(pkg).version;
@@ -36,7 +38,7 @@ async function main() {
       {
         encoding: "utf-8",
         stdio: "inherit",
-      },
+      }
     );
 
     // Run the extension test
@@ -55,6 +57,16 @@ async function main() {
       extensionTestsPath,
       launchArgs: [
         testWorkspace,
+        // This disables all extensions except the one being tested
+        "--disable-extensions",
+      ],
+    });
+    // test workspace2
+    await runTests({
+      extensionDevelopmentPath,
+      extensionTestsPath: extensionTestsPath2,
+      launchArgs: [
+        testWorkspace2,
         // This disables all extensions except the one being tested
         "--disable-extensions",
       ],
