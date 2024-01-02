@@ -1,217 +1,217 @@
 {
-	"name": "five-server",
-	"displayName": "Live Server (Five Server)",
-	"description": "A better Live Server with instant updates, highlights and some PHP support.",
-	"version": "0.2.3",
-	"publisher": "yandeu",
-	"icon": "img/icon-star.png",
-	"license": "SEE LICENSE IN LICENSE",
-	"sponsor": {
-		"url": "https://github.com/sponsors/yandeu?frequency=recurring#:~:text=a%20month"
-	},
-	"engines": {
-		"vscode": "^1.66.2"
-	},
-	"categories": [
-		"Other"
-	],
-	"badges": [
-		{
-			"url": "https://img.shields.io/badge/Sponsor-%E2%9D%A4-lightgrey?style=social&logo=GitHub",
-			"href": "https://github.com/sponsors/yandeu",
-			"description": "GitHub Sponsors"
-		},
-		{
-			"url": "https://img.shields.io/badge/One--Time%20Donation-$1-lightgrey?style=social&logo=GitHub",
-			"href": "https://github.com/sponsors/yandeu?frequency=one-time&sponsor=yandeu#sponsors:~:text=%241%20one%20time",
-			"description": "One-Time Donation"
-		}
-	],
-	"keywords": [
-		"remote",
-		"browser",
-		"development",
-		"tool",
-		"html",
-		"php",
-		"http",
-		"live",
-		"instant",
-		"server",
-		"cli",
-		"preview",
-		"reload",
-		"refresh",
-		"update",
-		"highlight",
-		"live-server",
-		"live server"
-	],
-	"galleryBanner": {
-		"color": "#41205f",
-		"theme": "dark"
-	},
-	"qna": "https://github.com/yandeu/five-server/discussions",
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"main": "./dist/bundle/main.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "fiveServer.start",
-				"title": "Five-Server: Start"
-			},
-			{
-				"command": "fiveServer.close",
-				"title": "Five-Server: Close"
-			},
-			{
-				"command": "fiveServer.open",
-				"title": "Open with Five Server"
-			},
-			{
-				"command": "fiveServer.openRoot",
-				"title": "Open with Five Server (root)"
-			}
-		],
-		"keybindings": [
-			{
-				"command": "fiveServer.start",
-				"key": "alt+L alt+O",
-				"when": "editorTextFocus",
-				"mac": "cmd+L cmd+O"
-			},
-			{
-				"command": "fiveServer.close",
-				"key": "alt+L alt+C",
-				"when": "editorTextFocus",
-				"mac": "cmd+L cmd+C"
-			}
-		],
-		"menus": {
-			"explorer/context": [
-				{
-					"command": "fiveServer.open",
-					"group": "navigation@10",
-					"when": "!explorerResourceIsFolder"
-				},
-				{
-					"command": "fiveServer.openRoot",
-					"group": "navigation@10",
-					"when": "explorerResourceIsFolder"
-				}
-			],
-			"editor/context": [
-				{
-					"command": "fiveServer.open",
-					"group": "navigation@10"
-				}
-			]
-		},
-		"configuration": {
-			"title": "Five Server",
-			"properties": {
-				"fiveServer.injectBody": {
-					"type": "boolean",
-					"default": false,
-					"markdownDescription": "Allow real-time updates by injecting the html body. `boolean`\n\r*needs to perform html validation*"
-				},
-				"fiveServer.highlight": {
-					"type": "boolean",
-					"default": false,
-					"markdownDescription": "Highlights the html tag in the browser. `boolean`"
-				},
-				"fiveServer.navigate": {
-					"type": "boolean",
-					"default": true,
-					"markdownDescription": "Navigates your browser automatically to the current working file. `boolean`"
-				},
-				"fiveServer.browser": {
-					"type": "array",
-					"default": [],
-					"markdownDescription": "Open a specific browser instead of the default one. `string[]`"
-				},
-				"fiveServer.ignore": {
-					"type": "array",
-					"default": [],
-					"markdownDescription": "Files/Folders to ignore from watching. `Array<string | RegExp | Glob>`\n\r*dotfiles, node_modules, bower_components and jspm_packages are excluded by default*"
-				},
-				"fiveServer.openTerminal": {
-					"type": "boolean",
-					"default": true
-				},
-				"fiveServer.php.executable": {
-					"type": "string",
-					"default": "",
-					"markdownDescription": "Absolute path to PHP executable. `string`"
-				},
-				"fiveServer.php.ini": {
-					"type": "string",
-					"default": "",
-					"markdownDescription": "Absolute path to php.ini file. `string`"
-				},
-				"fiveServer.host": {
-					"type": "string",
-					"default": "0.0.0.0",
-					"markdownDescription": "Set the server host. `string`"
-				},
-				"fiveServer.port": {
-					"type": "number",
-					"default": 5500,
-					"minimum": 0,
-					"maximum": 65535,
-					"markdownDescription": "Set the server port. `number`\n\r*usually between 3000 and 9999*"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"make-package": "npm run compile && npx -y @vscode/vsce@latest package && npm test",
-		"clean": "npx rimraf@3 out",
-		"prune": "npx rimraf@3 dist out node_modules package-lock.json",
-		"compile": "tsc -p ./ && node ./build.mjs",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npx rimraf@3 ./dist/**/*.ts  && npm run lint",
-		"format": "prettier --check src/** .vscode/**",
-		"format:write": "prettier --write src/** .vscode/**",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js",
-		"test-compile": "tsc -p ./"
-	},
-	"dependencies": {
-		"bufferutil": "^4.0.5",
-		"five-server": "^0.3.1",
-		"fsevents": "^2.3.2"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.0.0",
-		"@types/node": "^16.11.9",
-		"@types/node-fetch": "^2.6.1",
-		"@types/vscode": "^1.42.1",
-		"@typescript-eslint/eslint-plugin": "^5.4.0",
-		"@typescript-eslint/parser": "^5.4.0",
-		"@vscode/test-electron": "^2.1.3",
-		"esbuild": "^0.17.19",
-		"eslint": "^8.3.0",
-		"glob": "^7.2.0",
-		"mocha": "^9.1.3",
-		"node-fetch": "^2.6.7",
-		"typescript": "^4.5.2"
-	},
-	"bugs": {
-		"url": "https://github.com/yandeu/five-server/discussions"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/yandeu/five-server-vscode.git"
-	},
-	"homepage": "https://github.com/yandeu/five-server-vscode#readme",
-	"__metadata": {
-		"id": "a18a6705-5a6a-4e14-a4a7-3efa6b7647d5",
-		"publisherDisplayName": "Yannick",
-		"publisherId": "a342b7ab-2d58-4313-9c2d-f506bb2aa10c",
-		"isPreReleaseVersion": false
-	}
+  "name": "five-server",
+  "displayName": "Live Server (Five Server)",
+  "description": "A better Live Server with instant updates, highlights and some PHP support.",
+  "version": "0.3.0",
+  "publisher": "yandeu",
+  "icon": "img/icon-star.png",
+  "license": "SEE LICENSE IN LICENSE",
+  "sponsor": {
+    "url": "https://github.com/sponsors/yandeu?frequency=recurring#:~:text=a%20month"
+  },
+  "engines": {
+    "vscode": "^1.66.2"
+  },
+  "categories": [
+    "Other"
+  ],
+  "badges": [
+    {
+      "url": "https://img.shields.io/badge/Sponsor-%E2%9D%A4-lightgrey?style=social&logo=GitHub",
+      "href": "https://github.com/sponsors/yandeu",
+      "description": "GitHub Sponsors"
+    },
+    {
+      "url": "https://img.shields.io/badge/One--Time%20Donation-$1-lightgrey?style=social&logo=GitHub",
+      "href": "https://github.com/sponsors/yandeu?frequency=one-time&sponsor=yandeu#sponsors:~:text=%241%20one%20time",
+      "description": "One-Time Donation"
+    }
+  ],
+  "keywords": [
+    "remote",
+    "browser",
+    "development",
+    "tool",
+    "html",
+    "php",
+    "http",
+    "live",
+    "instant",
+    "server",
+    "cli",
+    "preview",
+    "reload",
+    "refresh",
+    "update",
+    "highlight",
+    "live-server",
+    "live server"
+  ],
+  "galleryBanner": {
+    "color": "#41205f",
+    "theme": "dark"
+  },
+  "qna": "https://github.com/yandeu/five-server/discussions",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/bundle/main.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "fiveServer.start",
+        "title": "Five-Server: Start"
+      },
+      {
+        "command": "fiveServer.close",
+        "title": "Five-Server: Close"
+      },
+      {
+        "command": "fiveServer.open",
+        "title": "Open with Five Server"
+      },
+      {
+        "command": "fiveServer.openRoot",
+        "title": "Open with Five Server (root)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "fiveServer.start",
+        "key": "alt+L alt+O",
+        "when": "editorTextFocus",
+        "mac": "cmd+L cmd+O"
+      },
+      {
+        "command": "fiveServer.close",
+        "key": "alt+L alt+C",
+        "when": "editorTextFocus",
+        "mac": "cmd+L cmd+C"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "fiveServer.open",
+          "group": "navigation@10",
+          "when": "!explorerResourceIsFolder"
+        },
+        {
+          "command": "fiveServer.openRoot",
+          "group": "navigation@10",
+          "when": "explorerResourceIsFolder"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "fiveServer.open",
+          "group": "navigation@10"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Five Server",
+      "properties": {
+        "fiveServer.injectBody": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Allow real-time updates by injecting the html body. `boolean`\n\r*needs to perform html validation*"
+        },
+        "fiveServer.highlight": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Highlights the html tag in the browser. `boolean`"
+        },
+        "fiveServer.navigate": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Navigates your browser automatically to the current working file. `boolean`"
+        },
+        "fiveServer.browser": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Open a specific browser instead of the default one. `string[]`"
+        },
+        "fiveServer.ignore": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Files/Folders to ignore from watching. `Array<string | RegExp | Glob>`\n\r*dotfiles, node_modules, bower_components and jspm_packages are excluded by default*"
+        },
+        "fiveServer.openTerminal": {
+          "type": "boolean",
+          "default": true
+        },
+        "fiveServer.php.executable": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to PHP executable. `string`"
+        },
+        "fiveServer.php.ini": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to php.ini file. `string`"
+        },
+        "fiveServer.host": {
+          "type": "string",
+          "default": "0.0.0.0",
+          "markdownDescription": "Set the server host. `string`"
+        },
+        "fiveServer.port": {
+          "type": "number",
+          "default": 5500,
+          "minimum": 0,
+          "maximum": 65535,
+          "markdownDescription": "Set the server port. `number`\n\r*usually between 3000 and 9999*"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "make-package": "npm run compile && npx -y @vscode/vsce@latest package && npm test",
+    "clean": "npx rimraf@3 out",
+    "prune": "npx rimraf@3 dist out node_modules package-lock.json",
+    "compile": "tsc -p ./ && node ./build.mjs",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npx rimraf@3 ./dist/**/*.ts  && npm run lint",
+    "format": "prettier --check src/** .vscode/**",
+    "format:write": "prettier --write src/** .vscode/**",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "test-compile": "tsc -p ./"
+  },
+  "dependencies": {
+    "bufferutil": "^4.0.5",
+    "five-server": "^0.3.1",
+    "fsevents": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.9",
+    "@types/node-fetch": "^2.6.1",
+    "@types/vscode": "^1.42.1",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vscode/test-electron": "^2.1.3",
+    "esbuild": "^0.17.19",
+    "eslint": "^8.3.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.1.3",
+    "node-fetch": "^2.6.7",
+    "typescript": "^4.5.2"
+  },
+  "bugs": {
+    "url": "https://github.com/yandeu/five-server/discussions"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yandeu/five-server-vscode.git"
+  },
+  "homepage": "https://github.com/yandeu/five-server-vscode#readme",
+  "__metadata": {
+    "id": "a18a6705-5a6a-4e14-a4a7-3efa6b7647d5",
+    "publisherDisplayName": "Yannick",
+    "publisherId": "a342b7ab-2d58-4313-9c2d-f506bb2aa10c",
+    "isPreReleaseVersion": false
+  }
 }
