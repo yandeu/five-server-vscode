@@ -151,10 +151,10 @@
           "default": "",
           "markdownDescription": "Absolute path to php.ini file. `string`"
         },
-        "fiveServer.serverRoot": {
+        "fiveServer.baseURL": {
           "type": "string",
-          "default": "AUTO",
-          "markdownDescription": "Manually set the server root. (Useful if the server is behind a reverse proxy) `string`\n\r*Server root is automatically set to be blank if running on desktop and \"/proxy/{PORT}/\" if on web*"
+          "default": "/",
+          "markdownDescription": "Manually set the baseURL of the server. (Useful if the server is behind a reverse proxy) `string`\n\r*If set to 'AUTO' server root will automatically be set to \"/\" if running on desktop and \"/proxy/{PORT}/\" if on web*"
         },
         "fiveServer.host": {
           "type": "string",

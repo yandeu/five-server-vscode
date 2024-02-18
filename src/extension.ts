@@ -20,7 +20,7 @@ let pty: PTY;
 let activeFileName = "";
 let root: string = "";
 let _root: string | null = null;
-let serverRoot: string = "ERROR";
+let baseURL: string = "ERROR";
 let workspace: string | undefined;
 let rootAbsolute: string;
 let config: LiveServerParams = {};
@@ -112,12 +112,12 @@ const shouldInjectBody = () => {
   return false;
 };
 
-function guessServerRoot() {
-  // Auto set serverRoot based on appHost
-  if (config.serverRoot === "AUTO") {
-    serverRoot = "/";
+function autoSetBaseURL() {
+  // Auto set baseURL based on appHost
+  if (config.baseURL === "AUTO") {
+    baseURL = "/";
     if (vscode.env.appHost !== "desktop")
-      serverRoot = "/proxy/" + config.port ?? "5500" + "/";
+      baseURL = "/proxy/" + config.port ?? "5500" + "/";
   }
 }
 
@@ -278,7 +278,7 @@ export function activate(context: vscode.ExtensionContext) {
       // get configFile for "root, injectBody and highlight"
       config = { ...config, ...(await getConfigFile(true, workspace)) };
 
-      guessServerRoot();
+      autoSetBaseURL();
 
       if (_root) root = _root;
       else if (config && config.root) root = config.root;
@@ -315,7 +315,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file,
           root,
-          serverRoot,
+          baseURL,
           workspace,
           _cli: true,
         });
@@ -335,7 +335,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file,
           root,
-          serverRoot,
+          baseURL,
           workspace,
           _cli: true,
         });
@@ -362,14 +362,14 @@ export function activate(context: vscode.ExtensionContext) {
       const file = basename(fileName);
       const root = fileName.replace(file, "");
 
-      guessServerRoot();
+      autoSetBaseURL();
 
       // start a simple server
       await fiveServer.start({
         ...config,
         injectBody: shouldInjectBody(),
         root,
-        serverRoot,
+        baseURL,
         open: file,
       });
     }
