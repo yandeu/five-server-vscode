@@ -20,6 +20,7 @@ let pty: PTY;
 let activeFileName = "";
 let root: string = "";
 let _root: string | null = null;
+let serverRoot: string = "ERROR";
 let workspace: string | undefined;
 let rootAbsolute: string;
 let config: LiveServerParams = {};
@@ -110,6 +111,15 @@ const shouldInjectBody = () => {
   if (config && config.injectBody === true) return true;
   return false;
 };
+
+function guessServerRoot() {
+  // Auto set serverRoot based on appHost
+  if (config.serverRoot === "AUTO") {
+    serverRoot = "/";
+    if (vscode.env.appHost !== "desktop")
+      serverRoot = "/proxy/" + config.port ?? "5500" + "/";
+  }
+}
 
 export function activate(context: vscode.ExtensionContext) {
   context.workspaceState.update(state, "off");
@@ -268,6 +278,8 @@ export function activate(context: vscode.ExtensionContext) {
       // get configFile for "root, injectBody and highlight"
       config = { ...config, ...(await getConfigFile(true, workspace)) };
 
+      guessServerRoot();
+
       if (_root) root = _root;
       else if (config && config.root) root = config.root;
       else root = "";
@@ -303,6 +315,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file,
           root,
+          serverRoot,
           workspace,
           _cli: true,
         });
@@ -322,6 +335,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file,
           root,
+          serverRoot,
           workspace,
           _cli: true,
         });
@@ -348,11 +362,14 @@ export function activate(context: vscode.ExtensionContext) {
       const file = basename(fileName);
       const root = fileName.replace(file, "");
 
+      guessServerRoot();
+
       // start a simple server
       await fiveServer.start({
         ...config,
         injectBody: shouldInjectBody(),
         root,
+        serverRoot,
         open: file,
       });
     }

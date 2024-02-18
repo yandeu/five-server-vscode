@@ -151,6 +151,11 @@
           "default": "",
           "markdownDescription": "Absolute path to php.ini file. `string`"
         },
+        "fiveServer.serverRoot": {
+          "type": "string",
+          "default": "AUTO",
+          "markdownDescription": "Manually set the server root. (Useful if the server is behind a reverse proxy) `string`\n\r*Server root is automatically set to be blank if running on desktop and \"/proxy/{PORT}/\" if on web*"
+        },
         "fiveServer.host": {
           "type": "string",
           "default": "0.0.0.0",
