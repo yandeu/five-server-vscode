@@ -20,6 +20,7 @@ let pty: PTY;
 let activeFileName = "";
 let root: string = "";
 let _root: string | null = null;
+let baseURL: string = "NULL";
 let workspace: string | undefined;
 let rootAbsolute: string;
 let config: LiveServerParams = {};
@@ -110,6 +111,21 @@ const shouldInjectBody = () => {
   if (config && config.injectBody === true) return true;
   return false;
 };
+
+function autoSetBaseURL() {
+  // Auto set baseURL based on appHost
+  if (config.baseURL !== "AUTO") {
+    if (config.baseURL) baseURL = config.baseURL;
+    return;
+  }
+
+  if (vscode.env.appHost !== "desktop") {
+    baseURL = "/proxy/" + config.port ?? "5500" + "/";
+    return;
+  }
+
+  baseURL = "/";
+}
 
 export function activate(context: vscode.ExtensionContext) {
   context.workspaceState.update(state, "off");
@@ -268,6 +284,8 @@ export function activate(context: vscode.ExtensionContext) {
       // get configFile for "root, injectBody and highlight"
       config = { ...config, ...(await getConfigFile(true, workspace)) };
 
+      autoSetBaseURL();
+
       if (_root) root = _root;
       else if (config && config.root) root = config.root;
       else root = "";
@@ -303,6 +321,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file,
           root,
+          baseURL,
           workspace,
           _cli: true,
         });
@@ -322,6 +341,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file,
           root,
+          baseURL,
           workspace,
           _cli: true,
         });
@@ -348,11 +368,14 @@ export function activate(context: vscode.ExtensionContext) {
       const file = basename(fileName);
       const root = fileName.replace(file, "");
 
+      autoSetBaseURL();
+
       // start a simple server
       await fiveServer.start({
         ...config,
         injectBody: shouldInjectBody(),
         root,
+        baseURL,
         open: file,
       });
     }
