@@ -38,7 +38,7 @@ async function main() {
       {
         encoding: "utf-8",
         stdio: "inherit",
-      }
+      },
     );
 
     // Run the extension test

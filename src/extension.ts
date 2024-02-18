@@ -20,7 +20,7 @@ let pty: PTY;
 let activeFileName = "";
 let root: string = "";
 let _root: string | null = null;
-let baseURL: string = "ERROR";
+let baseURL: string = "NULL";
 let workspace: string | undefined;
 let rootAbsolute: string;
 let config: LiveServerParams = {};
@@ -114,11 +114,17 @@ const shouldInjectBody = () => {
 
 function autoSetBaseURL() {
   // Auto set baseURL based on appHost
-  if (config.baseURL === "AUTO") {
-    baseURL = "/";
-    if (vscode.env.appHost !== "desktop")
-      baseURL = "/proxy/" + config.port ?? "5500" + "/";
+  if (config.baseURL !== "AUTO") {
+    if (config.baseURL) baseURL = config.baseURL;
+    return;
   }
+
+  if (vscode.env.appHost !== "desktop") {
+    baseURL = "/proxy/" + config.port ?? "5500" + "/";
+    return;
+  }
+
+  baseURL = "/";
 }
 
 export function activate(context: vscode.ExtensionContext) {
