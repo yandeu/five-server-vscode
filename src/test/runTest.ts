@@ -16,28 +16,34 @@ async function main() {
     const version = JSON.parse(pkg).version;
 
     // Test the vsix package
-    const vscodeExecutablePath = await downloadAndUnzipVSCode(undefined);
+    const vscodeExecutablePath = await downloadAndUnzipVSCode();
     const [cliPath, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
     // Use cp.spawn / cp.exec for custom setup
+    console.log("LIST_EXTENSIONS");
     cp.spawnSync(cliPath, [...args, "--list-extensions"], {
       encoding: "utf-8",
       stdio: "inherit",
+      shell: process.platform === "win32",
     });
 
     // Use cp.spawn / cp.exec for custom setup
+    console.log("UNINSTALL_EXTENSIONS");
     cp.spawnSync(cliPath, [...args, "--uninstall-extension", "yandeu.five-server"], {
       encoding: "utf-8",
       stdio: "inherit",
+      shell: process.platform === "win32",
     });
 
     // Use cp.spawn / cp.exec for custom setup
+    console.log("INSTALL_FIVE_SERVER_VSIX");
     cp.spawnSync(
       cliPath,
       [...args, "--install-extension", path.resolve(__dirname, `../../five-server-${version}.vsix`)],
       {
         encoding: "utf-8",
         stdio: "inherit",
+        shell: process.platform === "win32",
       }
     );
 
