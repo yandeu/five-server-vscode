@@ -284,6 +284,11 @@ export function activate(context: vscode.ExtensionContext) {
         pty.write("File:", uri?.fsPath);
       }
 
+      /**
+       * Open a file when clicking "Open with Five Server" in the context menu of a file.
+       * OR
+       * Open a folder as Root when clicking "Open with Five Server (root)" on a folder in the Explorer.
+       */
       if (uri?.fsPath) {
         let file = uri.fsPath.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 
@@ -305,20 +310,25 @@ export function activate(context: vscode.ExtensionContext) {
           _cli: true,
         });
       }
+      /**
+       * Open Five Server at "/", or at whatever is specified in the config file,
+       * when clicking on "Go Live" in the status bar.
+       */
       //
       else {
-        let file = "";
+        // let file = "";
 
         // get current open file
-        const fileName = vscode.window.activeTextEditor?.document.fileName;
-        if (fileName) file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+        // const fileName = vscode.window.activeTextEditor?.document.fileName;
+        // if (fileName) file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 
-        if (debug) pty.write("Open:", file);
+        // if (debug) pty.write("Open:", file);
 
         await fiveServer.start({
           ...config,
           injectBody: shouldInjectBody(),
-          open: config.open !== undefined ? config.open : file,
+          // open: config.open !== undefined ? config.open : file,
+          open: config.open !== undefined ? config.open : "/",
           root,
           workspace,
           _cli: true,
