@@ -146,8 +146,6 @@ export function activate(context: vscode.ExtensionContext) {
     // don't reload browser if we modify css and inject css
     if (shouldInjectCss() && isCss(e.fileName)) return;
 
-    fiveServer.reloadBrowserWindow();
-
     // // we do not highlight other file than .html
     if (!isHtml(e.fileName)) return;
     if (!shouldInjectBody()) return;
