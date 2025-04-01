@@ -29,6 +29,7 @@ let debug = false;
 
 const state = `${namespace}.state`;
 const openCommand = `${namespace}.open`;
+const openViaShortcutCommand = `${namespace}.openViaShortcut`;
 const openRootCommand = `${namespace}.openRoot`;
 const startCommand = `${namespace}.start`;
 const closeCommand = `${namespace}.close`;
@@ -228,7 +229,14 @@ export function activate(context: vscode.ExtensionContext) {
     lastMessage = message;
   };
 
-  const startServer = async (uri: vscode.Uri) => {
+  // open on shortcut (alt+L alt+O)
+  const openViaShortcut = async (uri: vscode.Uri) => {
+    // get current open file
+    const fileName = vscode.window.activeTextEditor?.document.fileName;
+    await startServer(uri, fileName);
+  };
+
+  const startServer = async (uri: vscode.Uri, fileToOpen?: string) => {
     let startWorkers = false;
 
     updateStatusBarItem("loading");
@@ -288,9 +296,12 @@ export function activate(context: vscode.ExtensionContext) {
        * Open a file when clicking "Open with Five Server" in the context menu of a file.
        * OR
        * Open a folder as Root when clicking "Open with Five Server (root)" on a folder in the Explorer.
+       * OR
+       * Open "fileToOpen" when using the shortcut (alt+L alt+O).
        */
-      if (uri?.fsPath) {
-        let file = uri.fsPath.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+      if (uri?.fsPath || fileToOpen) {
+        let file = fileToOpen ? fileToOpen : uri.fsPath;
+        file = file.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 
         const isFile = extname(file) !== "";
 
@@ -442,6 +453,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand(openRootCommand, startServer));
   context.subscriptions.push(vscode.commands.registerCommand(closeCommand, closeServer));
   context.subscriptions.push(vscode.commands.registerCommand(statusBarItemCommand, toggleServer));
+  context.subscriptions.push(vscode.commands.registerCommand(openViaShortcutCommand, openViaShortcut));
 
   // create a new status bar item that we can now manage
   myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 0);

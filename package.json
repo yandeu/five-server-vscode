@@ -77,7 +77,7 @@
     ],
     "keybindings": [
       {
-        "command": "fiveServer.start",
+        "command": "fiveServer.openViaShortcut",
         "key": "alt+L alt+O",
         "when": "editorTextFocus",
         "mac": "cmd+L cmd+O"
