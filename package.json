@@ -139,7 +139,7 @@
         },
         "fiveServer.openTerminal": {
           "type": "boolean",
-          "default": true
+          "default": false
         },
         "fiveServer.php.executable": {
           "type": "string",
