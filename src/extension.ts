@@ -310,12 +310,12 @@ export function activate(context: vscode.ExtensionContext) {
       rootAbsolute = join(workspace, root);
 
       if (debug) {
-        pty.write("DEBUG:", '"workspace", "root" and "open" will be passed to fiveServer.start()');
-        pty.write("Workspace:", workspace);
-        pty.write("Root:", root);
-        pty.write("Absolute (workspace + root):", rootAbsolute);
-        pty.write("File:", uri?.fsPath);
-        pty.write("LastServerState:", lastServerState);
+        pty.debug("DEBUG:", '"workspace", "root" and "open" will be passed to fiveServer.start()');
+        pty.debug("Workspace:", workspace);
+        pty.debug("Root:", root);
+        pty.debug("Absolute (workspace + root):", rootAbsolute);
+        pty.debug("File:", uri?.fsPath);
+        pty.debug("LastServerState:", lastServerState);
       }
 
       /**
@@ -327,9 +327,9 @@ export function activate(context: vscode.ExtensionContext) {
         let file = fileToOpen ? fileToOpen : uri.path;
         const stat = await vscode.workspace.fs.stat(uri);
         if (debug) {
-          pty.write("file:", file);
-          pty.write("fileToOpen:", fileToOpen || "");
-          pty.write("uri.fsPath:", uri.fsPath);
+          pty.debug("file:", file);
+          pty.debug("fileToOpen:", fileToOpen || "");
+          pty.debug("uri.fsPath:", uri.fsPath);
         }
         file = file.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 

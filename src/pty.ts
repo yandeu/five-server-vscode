@@ -6,6 +6,11 @@ export class PTY {
 
   lastWrite = "";
 
+  public debug(...message: string[]) {
+    this.write(...message);
+    console.log(...message);
+  }
+
   public write(...message: string[]) {
     const write = message.join(" ");
 
