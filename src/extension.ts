@@ -229,15 +229,39 @@ export function activate(context: vscode.ExtensionContext) {
     lastMessage = message;
   };
 
+  // right-click on folder in explorer (open as root)
+  const startServerRoot = async (uri: vscode.Uri) => {
+    const directoryPath = uri.path;
+    const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.path;
+    if (workspacePath) {
+      const rootPath = directoryPath.replace(workspacePath, "").replace(/^\//, "");
+      const stat = await vscode.workspace.fs.stat(uri);
+      // is directory
+      if (stat.type === vscode.FileType.Directory) {
+        await startServer(uri, { rootPath });
+      }
+    }
+  };
+
   // open on shortcut (alt+L alt+O)
   const openViaShortcut = async (uri: vscode.Uri) => {
     // get current open file
-    const fileName = vscode.window.activeTextEditor?.document.fileName;
-    await startServer(uri, fileName);
+    const fileToOpen = vscode.window.activeTextEditor?.document.fileName;
+    await startServer(uri, { fileToOpen });
   };
 
-  const startServer = async (uri: vscode.Uri, fileToOpen?: string) => {
+  type StartServerOptions = {
+    fileToOpen?: string;
+    rootPath?: string;
+  };
+
+  const startServer = async (uri: vscode.Uri, startServerOptions: StartServerOptions = {}) => {
+    const { fileToOpen, rootPath } = startServerOptions;
+
     let startWorkers = false;
+
+    // "on" or "off"
+    const lastServerState = context.workspaceState.get<string>(state) || "off";
 
     updateStatusBarItem("loading");
     context.workspaceState.update(state, "loading");
@@ -258,23 +282,24 @@ export function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     message.addListener("message", messageHandler);
 
-    // reset config
-    config = {};
-    // get config from VSCode
-    config = assignVSCodeConfiguration();
+    config = {}; // reset config
+    config = assignVSCodeConfiguration(); // get config from VSCode
 
-    workspace = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+    workspace = vscode.workspace.workspaceFolders?.[0].uri.path;
 
     if (workspace) {
-      // get file stat (if uri is available)
-      const stat = uri ? await vscode.workspace.fs.stat(uri) : null;
-      // open directory as root (1 = File; 2 = Directory)
-      if (stat?.type === 2) _root = uri.fsPath.replace(workspace, "");
-
       // get configFile for "root, injectBody and highlight"
       config = { ...config, ...(await getConfigFile(true, workspace)) };
 
-      if (_root) root = _root;
+      // if five-server is on, and the current root path is not the same as requested,
+      // change the root of five-server by shutting it down, and later start it again.
+      if (lastServerState === "on" && rootPath !== root) {
+        await fiveServer.shutdown();
+      }
+
+      if (rootPath) root = rootPath;
+      // if the server is already running, use the current root directory
+      else if (lastServerState === "on") root = root;
       else if (config && config.root) root = config.root;
       else root = "";
 
@@ -290,20 +315,25 @@ export function activate(context: vscode.ExtensionContext) {
         pty.write("Root:", root);
         pty.write("Absolute (workspace + root):", rootAbsolute);
         pty.write("File:", uri?.fsPath);
+        pty.write("LastServerState:", lastServerState);
       }
 
       /**
        * Open a file when clicking "Open with Five Server" in the context menu of a file.
        * OR
-       * Open a folder as Root when clicking "Open with Five Server (root)" on a folder in the Explorer.
-       * OR
        * Open "fileToOpen" when using the shortcut (alt+L alt+O).
        */
-      if (uri?.fsPath || fileToOpen) {
-        let file = fileToOpen ? fileToOpen : uri.fsPath;
+      if (uri?.path || fileToOpen) {
+        let file = fileToOpen ? fileToOpen : uri.path;
+        const stat = await vscode.workspace.fs.stat(uri);
+        if (debug) {
+          pty.write("file:", file);
+          pty.write("fileToOpen:", fileToOpen || "");
+          pty.write("uri.fsPath:", uri.fsPath);
+        }
         file = file.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 
-        const isFile = extname(file) !== "";
+        const isFile = fileToOpen || (stat && stat.type === vscode.FileType.File);
 
         // serve .preview for all "files" other than .html and .php
         if (isFile && !isHtml(file) && !isPhp(file)) file += ".preview";
@@ -448,12 +478,19 @@ export function activate(context: vscode.ExtensionContext) {
     else if (_state === "off") vscode.commands.executeCommand(startCommand);
   };
 
-  context.subscriptions.push(vscode.commands.registerCommand(startCommand, startServer));
+  // open via context menu of file or a file in the explorer
   context.subscriptions.push(vscode.commands.registerCommand(openCommand, startServer));
-  context.subscriptions.push(vscode.commands.registerCommand(openRootCommand, startServer));
-  context.subscriptions.push(vscode.commands.registerCommand(closeCommand, closeServer));
-  context.subscriptions.push(vscode.commands.registerCommand(statusBarItemCommand, toggleServer));
+
+  // open via context menu of a folder the explorer
+  context.subscriptions.push(vscode.commands.registerCommand(openRootCommand, startServerRoot));
+
+  // open via shortcut (alt+L alt+O)
   context.subscriptions.push(vscode.commands.registerCommand(openViaShortcutCommand, openViaShortcut));
+
+  // clicking "Go Live" in status bar (toggle, start, close)
+  context.subscriptions.push(vscode.commands.registerCommand(statusBarItemCommand, toggleServer));
+  context.subscriptions.push(vscode.commands.registerCommand(startCommand, startServer));
+  context.subscriptions.push(vscode.commands.registerCommand(closeCommand, closeServer));
 
   // create a new status bar item that we can now manage
   myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 0);
