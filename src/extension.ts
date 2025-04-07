@@ -231,8 +231,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   // right-click on folder in explorer (open as root)
   const startServerRoot = async (uri: vscode.Uri) => {
-    const directoryPath = uri.path;
-    const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.path;
+    const directoryPath = uri.fsPath;
+    const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
     if (workspacePath) {
       const rootPath = directoryPath.replace(workspacePath, "").replace(/^\//, "");
       const stat = await vscode.workspace.fs.stat(uri);
@@ -285,7 +285,7 @@ export function activate(context: vscode.ExtensionContext) {
     config = {}; // reset config
     config = assignVSCodeConfiguration(); // get config from VSCode
 
-    workspace = vscode.workspace.workspaceFolders?.[0].uri.path;
+    workspace = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
 
     if (workspace) {
       // get configFile for "root, injectBody and highlight"
@@ -323,17 +323,26 @@ export function activate(context: vscode.ExtensionContext) {
        * OR
        * Open "fileToOpen" when using the shortcut (alt+L alt+O).
        */
-      if (uri?.path || fileToOpen) {
-        let file = fileToOpen ? fileToOpen : uri.path;
-        const stat = await vscode.workspace.fs.stat(uri);
+      if (uri?.fsPath || fileToOpen) {
+        let file = fileToOpen ? fileToOpen : uri?.fsPath;
+
         if (debug) {
           pty.debug("file:", file);
           pty.debug("fileToOpen:", fileToOpen || "");
-          pty.debug("uri.fsPath:", uri.fsPath);
+          pty.debug("uri.fsPath:", uri?.fsPath);
         }
         file = file.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
 
-        const isFile = fileToOpen || (stat && stat.type === vscode.FileType.File);
+        let isFile = false;
+        if (uri) {
+          const stat = await vscode.workspace.fs.stat(uri);
+          if (stat && stat.type === vscode.FileType.File) {
+            isFile = true;
+          }
+        }
+        if (fileToOpen) {
+          isFile = true;
+        }
 
         // serve .preview for all "files" other than .html and .php
         if (isFile && !isHtml(file) && !isPhp(file)) file += ".preview";
