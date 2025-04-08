@@ -297,7 +297,7 @@ export function activate(context: vscode.ExtensionContext) {
         await fiveServer.shutdown();
       }
 
-      if (rootPath) root = rootPath;
+      if (typeof rootPath === "string") root = rootPath;
       // if the server is already running, use the current root directory
       else if (lastServerState === "on") root = root;
       else if (config && config.root) root = config.root;
