@@ -293,7 +293,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // if five-server is on, and the current root path is not the same as requested,
       // change the root of five-server by shutting it down, and later start it again.
-      if (lastServerState === "on" && rootPath !== root) {
+      if (lastServerState === "on" && rootPath !== root && typeof rootPath !== "undefined") {
         await fiveServer.shutdown();
       }
 
