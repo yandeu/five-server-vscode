@@ -181,7 +181,7 @@
   },
   "dependencies": {
     "bufferutil": "^4.0.5",
-    "five-server": "^0.4.0"
+    "five-server": "^0.4.5"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
