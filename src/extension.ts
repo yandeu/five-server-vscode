@@ -366,19 +366,24 @@ export function activate(context: vscode.ExtensionContext) {
        */
       //
       else {
-        // let file = "";
+        let file = "";
 
-        // get current open file
-        // const fileName = vscode.window.activeTextEditor?.document.fileName;
-        // if (fileName) file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+        // get current open file if navigate flag is enabled
+        const fileName = vscode.window.activeTextEditor?.document.fileName;
+        const fileText = vscode.window.activeTextEditor?.document.getText();
 
-        // if (debug) pty.write("Open:", file);
+        // Check if we should navigate to the current file
+        if (fileName && fileText && shouldNavigate(fileName, fileText)) {
+          file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+          activeFileName = file;
+        }
+
+        if (debug) pty.write("Open:", file || "/");
 
         await fiveServer.start({
           ...config,
           injectBody: shouldInjectBody(),
-          // open: config.open !== undefined ? config.open : file,
-          open: config.open !== undefined ? config.open : "/",
+          open: config.open !== undefined ? config.open : (file || "/"),
           root,
           workspace,
           _cli: true,
