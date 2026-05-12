@@ -10,7 +10,7 @@
     "url": "https://github.com/sponsors/yandeu?frequency=recurring#:~:text=a%20month"
   },
   "engines": {
-    "vscode": "^1.66.2"
+    "vscode": "^1.90.0"
   },
   "categories": [
     "Other"
@@ -181,7 +181,7 @@
   },
   "dependencies": {
     "bufferutil": "^4.0.5",
-    "five-server": "^0.4.5"
+    "five-server": "^0.5.0"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",

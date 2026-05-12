@@ -79,9 +79,9 @@ async function main() {
     });
 
     // Download VS Code, unzip it and run the integration test
-    // (version 1.66.2 / March 2022 / Electron v17 with Node.js v16.13)
+    // (version 1.90 / May 2024 / Electron v29 with Node.js v20.9.0)
     await runTests({
-      version: "1.66.2",
+      version: "1.90",
       extensionDevelopmentPath,
       extensionTestsPath,
       launchArgs: [
