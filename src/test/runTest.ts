@@ -79,9 +79,9 @@ async function main() {
     });
 
     // Download VS Code, unzip it and run the integration test
-    // (version 1.90 / May 2024 / Electron v29 with Node.js v20.9.0)
+    // (version 1.90.0 / May 2024 / Electron v29 with Node.js v20.9.0)
     await runTests({
-      version: "1.90",
+      version: "1.90.0",
       extensionDevelopmentPath,
       extensionTestsPath,
       launchArgs: [
@@ -90,8 +90,11 @@ async function main() {
         "--disable-extensions",
       ],
     });
+
+    process.exit(0);
   } catch (err) {
     console.error("Failed to run tests");
+    console.error(err);
     process.exit(1);
   }
 }
