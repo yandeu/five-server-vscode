@@ -153,8 +153,21 @@
         },
         "fiveServer.host": {
           "type": "string",
-          "default": "0.0.0.0",
-          "markdownDescription": "Set the server host. `string`"
+          "default": "127.0.0.1",
+          "markdownDescription": "Set the server host. `127.0.0.1` (default) allows only this computer to connect. `0.0.0.0` allows any device on your network to connect.\n\n*Use `0.0.0.0` only on networks you trust.*"
+        },
+        "fiveServer.cors": {
+          "type": ["boolean", "array"],
+          "default": true,
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "Which origins may read Five Server's responses (CORS). `true` (default) allows this computer, and your private network when `host` is not `127.0.0.1`. `false` sends no CORS headers. A list of origins, e.g. `[\"http://localhost:3000\"]`, allows only those origins. Origins must match exactly, including the port. Regular expressions are only available in the config file."
+        },
+        "fiveServer.dotFiles": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Serve dotfiles such as `.env`. Default: `false`, which hides them in the browser. The `.git` folder is always hidden."
         },
         "fiveServer.port": {
           "type": "number",
@@ -181,7 +194,7 @@
   },
   "dependencies": {
     "bufferutil": "^4.0.5",
-    "five-server": "^0.5.0"
+    "five-server": "^0.6.0"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",

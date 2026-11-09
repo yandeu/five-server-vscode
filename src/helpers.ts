@@ -37,6 +37,8 @@ export const assignVSCodeConfiguration = () => {
   const port = <number>getConfig("port");
   const injectBody = <boolean>getConfig("injectBody");
   const highlight = <boolean>getConfig("highlight");
+  const cors = <boolean | string[]>getConfig("cors");
+  const dotFiles = <boolean>getConfig("dotFiles");
 
   return {
     browser,
@@ -48,5 +50,7 @@ export const assignVSCodeConfiguration = () => {
     port,
     injectBody,
     highlight,
+    cors,
+    dotFiles,
   };
 };
