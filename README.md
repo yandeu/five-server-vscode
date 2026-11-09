@@ -18,7 +18,7 @@
     target="__blank"
   >
     <img alt="VERSION" src="https://badgen.net/vs-marketplace/v/yandeu.five-server?color=228cb3&label="/>
-    <img alt="Visual Studio Marketplace Rating" src="https://img.shields.io/visual-studio-marketplace/r/yandeu.five-server?color=228cb3">
+    <img alt="Visual Studio Marketplace Rating" src="https://badgen.net/vs-marketplace/rating/yandeu.five-server?color=228cb3">
   </a>
   <a href="https://github.com/sponsors/yandeu" target="__blank">
     <img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/yandeu?color=228cb3">
