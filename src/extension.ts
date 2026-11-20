@@ -11,6 +11,7 @@ import { getConfigFile } from "five-server/lib/misc";
 import { message } from "five-server/lib/msg";
 
 import { PTY } from "./pty";
+import { resolveBaseURL } from "./baseURL";
 import { join, extname, basename } from "path";
 import { decorate, refreshDecorations } from "./decorator";
 import { assignVSCodeConfiguration, colors, getConfig, namespace } from "./helpers";
@@ -20,7 +21,6 @@ let openURL = "";
 let pty: PTY;
 let activeFileName = "";
 let root: string = "";
-let _root: string | null = null;
 let baseURL: string = "NULL";
 let workspace: string | undefined;
 let servedWorkspace: string | undefined;
@@ -116,18 +116,8 @@ const shouldInjectBody = () => {
 };
 
 function autoSetBaseURL() {
-  // Auto set baseURL based on appHost
-  if (config.baseURL !== "AUTO") {
-    if (config.baseURL) baseURL = config.baseURL;
-    return;
-  }
-
-  if (vscode.env.appHost !== "desktop") {
-    baseURL = "/proxy/" + config.port ?? "5500" + "/";
-    return;
-  }
-
-  baseURL = "/";
+  const resolved = resolveBaseURL(config.baseURL, vscode.env.appHost, config.port);
+  if (resolved) baseURL = resolved;
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -352,7 +342,6 @@ export function activate(context: vscode.ExtensionContext) {
       autoSetBaseURL();
 
       if (typeof rootPath === "string") root = rootPath;
-      else if (_root) root = _root;
       // if the server is already running on this folder, use the current root directory
       else if (lastServerState === "on" && !folderChanged) root = root;
       else if (config && config.root) root = config.root;
@@ -524,8 +513,6 @@ export function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     message.removeListener("message", messageHandler);
 
-    // reset tmp root
-    _root = null;
     servedWorkspace = undefined;
 
     if (fiveServer) {
