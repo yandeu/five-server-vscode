@@ -13,7 +13,8 @@ export function run(): Promise<void> {
   const testsRoot = path.resolve(__dirname, "..");
 
   return new Promise((c, e) => {
-    glob("**/**.test.js", { cwd: testsRoot }, (err, files) => {
+    // Unit tests (src/test/unit) use BDD and run with `npm run test:unit`, so skip them here
+    glob("**/**.test.js", { cwd: testsRoot, ignore: "unit/**" }, (err, files) => {
       if (err) {
         return e(err);
       }

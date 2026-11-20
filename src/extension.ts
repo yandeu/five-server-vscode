@@ -14,6 +14,7 @@ import { PTY } from "./pty";
 import { join, extname, basename } from "path";
 import { decorate, refreshDecorations } from "./decorator";
 import { assignVSCodeConfiguration, colors, getConfig, namespace } from "./helpers";
+import { isPathInside, relativeFolderPath, resolveWorkspaceFolder, WorkspaceFolderInfo } from "./workspaceFolder";
 
 let openURL = "";
 let pty: PTY;
@@ -21,6 +22,7 @@ let activeFileName = "";
 let root: string = "";
 let _root: string | null = null;
 let workspace: string | undefined;
+let servedWorkspace: string | undefined;
 let rootAbsolute: string;
 let config: LiveServerParams = {};
 let fiveServer: FiveServer | undefined;
@@ -195,7 +197,8 @@ export function activate(context: vscode.ExtensionContext) {
     if (activeFileName === fileName) return;
     activeFileName = fileName;
 
-    if (fileName && workspace) {
+    // only navigate to files inside the served folder
+    if (fileName && workspace && isPathInside(workspace, fileName)) {
       fileName = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
       fiveServer.navigate(`/${fileName}`);
     }
@@ -229,12 +232,25 @@ export function activate(context: vscode.ExtensionContext) {
     lastMessage = message;
   };
 
+  const getWorkspaceFolders = (): WorkspaceFolderInfo[] => {
+    return (vscode.workspace.workspaceFolders ?? []).map((f) => ({ name: f.name, fsPath: f.uri.fsPath }));
+  };
+
+  // ask the user which workspace folder to serve
+  const pickWorkspaceFolder = async (folders: WorkspaceFolderInfo[]): Promise<WorkspaceFolderInfo | undefined> => {
+    const items = folders.map((f) => ({ label: f.name, description: f.fsPath, folder: f }));
+    const picked = await vscode.window.showQuickPick(items, {
+      placeHolder: "Select the workspace folder to serve with Five Server",
+    });
+    return picked?.folder;
+  };
+
   // right-click on folder in explorer (open as root)
   const startServerRoot = async (uri: vscode.Uri) => {
     const directoryPath = uri.fsPath;
-    const workspacePath = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-    if (workspacePath) {
-      const rootPath = directoryPath.replace(workspacePath, "").replace(/^\//, "");
+    const resolution = resolveWorkspaceFolder(getWorkspaceFolders(), directoryPath);
+    if (resolution.kind === "folder") {
+      const rootPath = relativeFolderPath(resolution.folder.fsPath, directoryPath);
       const stat = await vscode.workspace.fs.stat(uri);
       // is directory
       if (stat.type === vscode.FileType.Directory) {
@@ -269,6 +285,25 @@ export function activate(context: vscode.ExtensionContext) {
     // display loading text
     await new Promise((r) => setTimeout(r, 250));
 
+    // serve the folder that contains the file, or let the user pick when that is ambiguous
+    const folders = getWorkspaceFolders();
+    const filePath = fileToOpen || uri?.fsPath || vscode.window.activeTextEditor?.document.fileName;
+    const resolution = resolveWorkspaceFolder(folders, filePath);
+
+    if (resolution.kind === "pick") {
+      const picked = await pickWorkspaceFolder(folders);
+      if (!picked) {
+        updateStatusBarItem(lastServerState);
+        context.workspaceState.update(state, lastServerState);
+        return "cancelled";
+      }
+      workspace = picked.fsPath;
+    } else if (resolution.kind === "folder") {
+      workspace = resolution.folder.fsPath;
+    } else {
+      workspace = undefined;
+    }
+
     if (!pty) pty = new PTY(getConfig("openTerminal"));
 
     if (!fiveServer) {
@@ -285,21 +320,22 @@ export function activate(context: vscode.ExtensionContext) {
     config = {}; // reset config
     config = assignVSCodeConfiguration(); // get config from VSCode
 
-    workspace = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-
     if (workspace) {
       // get configFile for "root, injectBody and highlight"
       config = { ...config, ...(await getConfigFile(true, workspace)) };
 
+      // a server running for another folder has to restart on the chosen folder
+      const folderChanged = lastServerState === "on" && servedWorkspace !== undefined && servedWorkspace !== workspace;
+
       // if five-server is on, and the current root path is not the same as requested,
       // change the root of five-server by shutting it down, and later start it again.
-      if (lastServerState === "on" && rootPath !== root && typeof rootPath !== "undefined") {
+      if (lastServerState === "on" && ((rootPath !== root && typeof rootPath !== "undefined") || folderChanged)) {
         await fiveServer.shutdown();
       }
 
       if (typeof rootPath === "string") root = rootPath;
-      // if the server is already running, use the current root directory
-      else if (lastServerState === "on") root = root;
+      // if the server is already running on this folder, use the current root directory
+      else if (lastServerState === "on" && !folderChanged) root = root;
       else if (config && config.root) root = config.root;
       else root = "";
 
@@ -383,7 +419,7 @@ export function activate(context: vscode.ExtensionContext) {
         await fiveServer.start({
           ...config,
           injectBody: shouldInjectBody(),
-          open: config.open !== undefined ? config.open : (file || "/"),
+          open: config.open !== undefined ? config.open : file || "/",
           root,
           workspace,
           _cli: true,
@@ -420,6 +456,7 @@ export function activate(context: vscode.ExtensionContext) {
       });
     }
 
+    servedWorkspace = workspace;
     openURL = fiveServer.openURL;
     updateStatusBarItem("on");
     context.workspaceState.update(state, "on");
@@ -465,6 +502,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // reset tmp root
     _root = null;
+    servedWorkspace = undefined;
 
     if (fiveServer) {
       fiveServer.shutdown().then(() => {
