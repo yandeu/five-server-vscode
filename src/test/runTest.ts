@@ -16,28 +16,34 @@ async function main() {
     const version = JSON.parse(pkg).version;
 
     // Test the vsix package
-    const vscodeExecutablePath = await downloadAndUnzipVSCode(undefined);
+    const vscodeExecutablePath = await downloadAndUnzipVSCode();
     const [cliPath, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
     // Use cp.spawn / cp.exec for custom setup
+    console.log("LIST_EXTENSIONS");
     cp.spawnSync(cliPath, [...args, "--list-extensions"], {
       encoding: "utf-8",
       stdio: "inherit",
+      shell: process.platform === "win32",
     });
 
     // Use cp.spawn / cp.exec for custom setup
+    console.log("UNINSTALL_EXTENSIONS");
     cp.spawnSync(cliPath, [...args, "--uninstall-extension", "yandeu.five-server"], {
       encoding: "utf-8",
       stdio: "inherit",
+      shell: process.platform === "win32",
     });
 
     // Use cp.spawn / cp.exec for custom setup
+    console.log("INSTALL_FIVE_SERVER_VSIX");
     cp.spawnSync(
       cliPath,
       [...args, "--install-extension", path.resolve(__dirname, `../../five-server-${version}.vsix`)],
       {
         encoding: "utf-8",
         stdio: "inherit",
+        shell: process.platform === "win32",
       },
     );
 
@@ -73,9 +79,9 @@ async function main() {
     });
 
     // Download VS Code, unzip it and run the integration test
-    // (version 1.66.2 / March 2022 / Electron v17 with Node.js v16.13)
+    // (version 1.90.0 / May 2024 / Electron v29 with Node.js v20.9.0)
     await runTests({
-      version: "1.66.2",
+      version: "1.90.0",
       extensionDevelopmentPath,
       extensionTestsPath,
       launchArgs: [
@@ -84,8 +90,11 @@ async function main() {
         "--disable-extensions",
       ],
     });
+
+    process.exit(0);
   } catch (err) {
     console.error("Failed to run tests");
+    console.error(err);
     process.exit(1);
   }
 }

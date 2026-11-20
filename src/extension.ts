@@ -14,6 +14,7 @@ import { PTY } from "./pty";
 import { join, extname, basename } from "path";
 import { decorate, refreshDecorations } from "./decorator";
 import { assignVSCodeConfiguration, colors, getConfig, namespace } from "./helpers";
+import { isPathInside, relativeFolderPath, resolveWorkspaceFolder, WorkspaceFolderInfo } from "./workspaceFolder";
 
 let openURL = "";
 let pty: PTY;
@@ -22,6 +23,7 @@ let root: string = "";
 let _root: string | null = null;
 let baseURL: string = "NULL";
 let workspace: string | undefined;
+let servedWorkspace: string | undefined;
 let rootAbsolute: string;
 let config: LiveServerParams = {};
 let fiveServer: FiveServer | undefined;
@@ -30,6 +32,7 @@ let debug = false;
 
 const state = `${namespace}.state`;
 const openCommand = `${namespace}.open`;
+const openViaShortcutCommand = `${namespace}.openViaShortcut`;
 const openRootCommand = `${namespace}.openRoot`;
 const startCommand = `${namespace}.start`;
 const closeCommand = `${namespace}.close`;
@@ -162,8 +165,6 @@ export function activate(context: vscode.ExtensionContext) {
     // don't reload browser if we modify css and inject css
     if (shouldInjectCss() && isCss(e.fileName)) return;
 
-    fiveServer.reloadBrowserWindow();
-
     // // we do not highlight other file than .html
     if (!isHtml(e.fileName)) return;
     if (!shouldInjectBody()) return;
@@ -212,7 +213,8 @@ export function activate(context: vscode.ExtensionContext) {
     if (activeFileName === fileName) return;
     activeFileName = fileName;
 
-    if (fileName && workspace) {
+    // only navigate to files inside the served folder
+    if (fileName && workspace && isPathInside(workspace, fileName)) {
       fileName = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
       fiveServer.navigate(`/${fileName}`);
     }
@@ -246,14 +248,77 @@ export function activate(context: vscode.ExtensionContext) {
     lastMessage = message;
   };
 
-  const startServer = async (uri: vscode.Uri) => {
+  const getWorkspaceFolders = (): WorkspaceFolderInfo[] => {
+    return (vscode.workspace.workspaceFolders ?? []).map((f) => ({ name: f.name, fsPath: f.uri.fsPath }));
+  };
+
+  // ask the user which workspace folder to serve
+  const pickWorkspaceFolder = async (folders: WorkspaceFolderInfo[]): Promise<WorkspaceFolderInfo | undefined> => {
+    const items = folders.map((f) => ({ label: f.name, description: f.fsPath, folder: f }));
+    const picked = await vscode.window.showQuickPick(items, {
+      placeHolder: "Select the workspace folder to serve with Five Server",
+    });
+    return picked?.folder;
+  };
+
+  // right-click on folder in explorer (open as root)
+  const startServerRoot = async (uri: vscode.Uri) => {
+    const directoryPath = uri.fsPath;
+    const resolution = resolveWorkspaceFolder(getWorkspaceFolders(), directoryPath);
+    if (resolution.kind === "folder") {
+      const rootPath = relativeFolderPath(resolution.folder.fsPath, directoryPath);
+      const stat = await vscode.workspace.fs.stat(uri);
+      // is directory
+      if (stat.type === vscode.FileType.Directory) {
+        await startServer(uri, { rootPath });
+      }
+    }
+  };
+
+  // open on shortcut (alt+L alt+O)
+  const openViaShortcut = async (uri: vscode.Uri) => {
+    // get current open file
+    const fileToOpen = vscode.window.activeTextEditor?.document.fileName;
+    await startServer(uri, { fileToOpen });
+  };
+
+  type StartServerOptions = {
+    fileToOpen?: string;
+    rootPath?: string;
+  };
+
+  const startServer = async (uri: vscode.Uri, startServerOptions: StartServerOptions = {}) => {
+    const { fileToOpen, rootPath } = startServerOptions;
+
     let startWorkers = false;
+
+    // "on" or "off"
+    const lastServerState = context.workspaceState.get<string>(state) || "off";
 
     updateStatusBarItem("loading");
     context.workspaceState.update(state, "loading");
 
     // display loading text
     await new Promise((r) => setTimeout(r, 250));
+
+    // serve the folder that contains the file, or let the user pick when that is ambiguous
+    const folders = getWorkspaceFolders();
+    const filePath = fileToOpen || uri?.fsPath || vscode.window.activeTextEditor?.document.fileName;
+    const resolution = resolveWorkspaceFolder(folders, filePath);
+
+    if (resolution.kind === "pick") {
+      const picked = await pickWorkspaceFolder(folders);
+      if (!picked) {
+        updateStatusBarItem(lastServerState);
+        context.workspaceState.update(state, lastServerState);
+        return "cancelled";
+      }
+      workspace = picked.fsPath;
+    } else if (resolution.kind === "folder") {
+      workspace = resolution.folder.fsPath;
+    } else {
+      workspace = undefined;
+    }
 
     if (!pty) pty = new PTY(getConfig("openTerminal"));
 
@@ -268,25 +333,28 @@ export function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     message.addListener("message", messageHandler);
 
-    // reset config
-    config = {};
-    // get config from VSCode
-    config = assignVSCodeConfiguration();
-
-    workspace = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+    config = {}; // reset config
+    config = assignVSCodeConfiguration(); // get config from VSCode
 
     if (workspace) {
-      // get file stat (if uri is available)
-      const stat = uri ? await vscode.workspace.fs.stat(uri) : null;
-      // open directory as root (1 = File; 2 = Directory)
-      if (stat?.type === 2) _root = uri.fsPath.replace(workspace, "");
-
       // get configFile for "root, injectBody and highlight"
       config = { ...config, ...(await getConfigFile(true, workspace)) };
 
+      // a server running for another folder has to restart on the chosen folder
+      const folderChanged = lastServerState === "on" && servedWorkspace !== undefined && servedWorkspace !== workspace;
+
+      // if five-server is on, and the current root path is not the same as requested,
+      // change the root of five-server by shutting it down, and later start it again.
+      if (lastServerState === "on" && ((rootPath !== root && typeof rootPath !== "undefined") || folderChanged)) {
+        await fiveServer.shutdown();
+      }
+
       autoSetBaseURL();
 
-      if (_root) root = _root;
+      if (typeof rootPath === "string") root = rootPath;
+      else if (_root) root = _root;
+      // if the server is already running on this folder, use the current root directory
+      else if (lastServerState === "on" && !folderChanged) root = root;
       else if (config && config.root) root = config.root;
       else root = "";
 
@@ -297,17 +365,39 @@ export function activate(context: vscode.ExtensionContext) {
       rootAbsolute = join(workspace, root);
 
       if (debug) {
-        pty.write("DEBUG:", '"workspace", "root" and "open" will be passed to fiveServer.start()');
-        pty.write("Workspace:", workspace);
-        pty.write("Root:", root);
-        pty.write("Absolute (workspace + root):", rootAbsolute);
-        pty.write("File:", uri?.fsPath);
+        pty.debug("DEBUG:", '"workspace", "root" and "open" will be passed to fiveServer.start()');
+        pty.debug("Workspace:", workspace);
+        pty.debug("Root:", root);
+        pty.debug("Absolute (workspace + root):", rootAbsolute);
+        pty.debug("File:", uri?.fsPath);
+        pty.debug("LastServerState:", lastServerState);
       }
 
-      if (uri?.fsPath) {
-        let file = uri.fsPath.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+      /**
+       * Open a file when clicking "Open with Five Server" in the context menu of a file.
+       * OR
+       * Open "fileToOpen" when using the shortcut (alt+L alt+O).
+       */
+      if (uri?.fsPath || fileToOpen) {
+        let file = fileToOpen ? fileToOpen : uri?.fsPath;
 
-        const isFile = extname(file) !== "";
+        if (debug) {
+          pty.debug("file:", file);
+          pty.debug("fileToOpen:", fileToOpen || "");
+          pty.debug("uri.fsPath:", uri?.fsPath);
+        }
+        file = file.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+
+        let isFile = false;
+        if (uri) {
+          const stat = await vscode.workspace.fs.stat(uri);
+          if (stat && stat.type === vscode.FileType.File) {
+            isFile = true;
+          }
+        }
+        if (fileToOpen) {
+          isFile = true;
+        }
 
         // serve .preview for all "files" other than .html and .php
         if (isFile && !isHtml(file) && !isPhp(file)) file += ".preview";
@@ -326,20 +416,30 @@ export function activate(context: vscode.ExtensionContext) {
           _cli: true,
         });
       }
+      /**
+       * Open Five Server at "/", or at whatever is specified in the config file,
+       * when clicking on "Go Live" in the status bar.
+       */
       //
       else {
         let file = "";
 
-        // get current open file
+        // get current open file if navigate flag is enabled
         const fileName = vscode.window.activeTextEditor?.document.fileName;
-        if (fileName) file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+        const fileText = vscode.window.activeTextEditor?.document.getText();
 
-        if (debug) pty.write("Open:", file);
+        // Check if we should navigate to the current file
+        if (fileName && fileText && shouldNavigate(fileName, fileText)) {
+          file = fileName.replace(rootAbsolute, "").replace(/^\\|^\//gm, "");
+          activeFileName = file;
+        }
+
+        if (debug) pty.write("Open:", file || "/");
 
         await fiveServer.start({
           ...config,
           injectBody: shouldInjectBody(),
-          open: config.open !== undefined ? config.open : file,
+          open: config.open !== undefined ? config.open : file || "/",
           root,
           baseURL,
           workspace,
@@ -380,6 +480,7 @@ export function activate(context: vscode.ExtensionContext) {
       });
     }
 
+    servedWorkspace = workspace;
     openURL = fiveServer.openURL;
     updateStatusBarItem("on");
     context.workspaceState.update(state, "on");
@@ -425,6 +526,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // reset tmp root
     _root = null;
+    servedWorkspace = undefined;
 
     if (fiveServer) {
       fiveServer.shutdown().then(() => {
@@ -452,11 +554,19 @@ export function activate(context: vscode.ExtensionContext) {
     else if (_state === "off") vscode.commands.executeCommand(startCommand);
   };
 
-  context.subscriptions.push(vscode.commands.registerCommand(startCommand, startServer));
+  // open via context menu of file or a file in the explorer
   context.subscriptions.push(vscode.commands.registerCommand(openCommand, startServer));
-  context.subscriptions.push(vscode.commands.registerCommand(openRootCommand, startServer));
-  context.subscriptions.push(vscode.commands.registerCommand(closeCommand, closeServer));
+
+  // open via context menu of a folder the explorer
+  context.subscriptions.push(vscode.commands.registerCommand(openRootCommand, startServerRoot));
+
+  // open via shortcut (alt+L alt+O)
+  context.subscriptions.push(vscode.commands.registerCommand(openViaShortcutCommand, openViaShortcut));
+
+  // clicking "Go Live" in status bar (toggle, start, close)
   context.subscriptions.push(vscode.commands.registerCommand(statusBarItemCommand, toggleServer));
+  context.subscriptions.push(vscode.commands.registerCommand(startCommand, startServer));
+  context.subscriptions.push(vscode.commands.registerCommand(closeCommand, closeServer));
 
   // create a new status bar item that we can now manage
   myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 0);
