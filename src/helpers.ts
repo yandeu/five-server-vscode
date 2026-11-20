@@ -33,6 +33,7 @@ export const assignVSCodeConfiguration = () => {
   const navigate = <boolean>getConfig("navigate");
   const php = <string>getConfig("php.executable");
   const phpIni = <string>getConfig("php.ini");
+  const baseURL = <string>getConfig("baseURL");
   const host = <string>getConfig("host");
   const port = <number>getConfig("port");
   const injectBody = <boolean>getConfig("injectBody");
@@ -46,6 +47,7 @@ export const assignVSCodeConfiguration = () => {
     navigate,
     php,
     phpIni,
+    baseURL,
     host,
     port,
     injectBody,

@@ -11,6 +11,7 @@ import { getConfigFile } from "five-server/lib/misc";
 import { message } from "five-server/lib/msg";
 
 import { PTY } from "./pty";
+import { resolveBaseURL } from "./baseURL";
 import { join, extname, basename } from "path";
 import { decorate, refreshDecorations } from "./decorator";
 import { assignVSCodeConfiguration, colors, getConfig, namespace } from "./helpers";
@@ -20,7 +21,7 @@ let openURL = "";
 let pty: PTY;
 let activeFileName = "";
 let root: string = "";
-let _root: string | null = null;
+let baseURL: string = "NULL";
 let workspace: string | undefined;
 let servedWorkspace: string | undefined;
 let rootAbsolute: string;
@@ -113,6 +114,11 @@ const shouldInjectBody = () => {
   if (config && config.injectBody === true) return true;
   return false;
 };
+
+function autoSetBaseURL() {
+  const resolved = resolveBaseURL(config.baseURL, vscode.env.appHost, config.port);
+  if (resolved) baseURL = resolved;
+}
 
 export function activate(context: vscode.ExtensionContext) {
   context.workspaceState.update(state, "off");
@@ -333,6 +339,8 @@ export function activate(context: vscode.ExtensionContext) {
         await fiveServer.shutdown();
       }
 
+      autoSetBaseURL();
+
       if (typeof rootPath === "string") root = rootPath;
       // if the server is already running on this folder, use the current root directory
       else if (lastServerState === "on" && !folderChanged) root = root;
@@ -392,6 +400,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file,
           root,
+          baseURL,
           workspace,
           _cli: true,
         });
@@ -421,6 +430,7 @@ export function activate(context: vscode.ExtensionContext) {
           injectBody: shouldInjectBody(),
           open: config.open !== undefined ? config.open : file || "/",
           root,
+          baseURL,
           workspace,
           _cli: true,
         });
@@ -447,11 +457,14 @@ export function activate(context: vscode.ExtensionContext) {
       const file = basename(fileName);
       const root = fileName.replace(file, "");
 
+      autoSetBaseURL();
+
       // start a simple server
       await fiveServer.start({
         ...config,
         injectBody: shouldInjectBody(),
         root,
+        baseURL,
         open: file,
       });
     }
@@ -500,8 +513,6 @@ export function activate(context: vscode.ExtensionContext) {
     // @ts-ignore
     message.removeListener("message", messageHandler);
 
-    // reset tmp root
-    _root = null;
     servedWorkspace = undefined;
 
     if (fiveServer) {

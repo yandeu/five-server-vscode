@@ -44,7 +44,7 @@ async function main() {
         encoding: "utf-8",
         stdio: "inherit",
         shell: process.platform === "win32",
-      }
+      },
     );
 
     // Run the extension test
