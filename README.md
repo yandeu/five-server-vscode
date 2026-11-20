@@ -46,7 +46,9 @@
 2. Right-Click an Open File > **Open with Five Server**
 3. Right-Click a File in the Explorer > **Open with Five Server**
 4. Right-Click a Folder in the Explorer > **Open with Five Server (root)**  
-   _(will set the current folder as root until you stop the server)_
+   _(will set the clicked folder as root until you stop the server)_
+
+With several folders open in a multi-root workspace, Five Server serves the workspace folder that contains the active or clicked file. If no open folder contains that file, a list of folder names is shown so you can pick one. A running server restarts on another folder when you start it for a file in that folder, and it then uses that folder's config file.
 
 To stop the server, click the **Go Live** item in the Status Bar again, or run **Five-Server: Close** from the Command Palette.
 
