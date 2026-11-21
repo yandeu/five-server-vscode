@@ -150,7 +150,7 @@ These settings are available in VS Code under **Settings > Extensions > Five Ser
 | `fiveServer.navigate` | `false` | Open the page of the file you are editing. |
 | `fiveServer.browser` | `[]` | Browser to open, e.g. `"chrome"`. |
 | `fiveServer.ignore` | `[]` | Files and folders to ignore while watching. |
-| `fiveServer.openTerminal` | `false` | Show the Five Server terminal when the server starts. |
+| `fiveServer.openTerminal` | `true` | Show the Five Server terminal when the server starts. |
 | `fiveServer.php.executable` | `""` | Path to the PHP executable. |
 | `fiveServer.php.ini` | `""` | Path to a `php.ini` file. |
 
