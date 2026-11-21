@@ -57,6 +57,8 @@ Keyboard shortcuts (while the editor has focus):
 - `Alt+L Alt+O` opens the current file with Five Server (`Cmd+L Cmd+O` on macOS).
 - `Alt+L Alt+C` closes Five Server (`Cmd+L Cmd+C` on macOS).
 
+Also see the [Five Server tool on html2app.dev](https://html2app.dev/tools/five-server).
+
 ## Videos
 
 - [Instant Update](https://youtu.be/3-zKYNrxKOk)
